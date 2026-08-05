@@ -67,8 +67,17 @@ COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
-RUN npx nx run twenty-front:lingui:extract && \
-    npx nx run twenty-front:lingui:compile
+# On small/cold builders nx's default parallelism (3) is unsafe for this graph:
+# it overlaps twenty-sdk's `build` (rimraf dist) with `build:sdk` writing the same
+# dist/ (ENOTEMPTY rmdir race, seen locally), and it CPU-starves lingui's SWC
+# extractor worker (threads lib, 10s init default) so it times out (seen on the
+# 4-vCPU droplet). Serialize nx (--parallel=1), run lingui single-process
+# (--workers=1 -> no worker pool spawned), and raise the worker-init timeout as
+# belt-and-suspenders insurance.
+RUN THREADS_WORKER_INIT_TIMEOUT=60000 NX_DAEMON=false \
+      npx nx run twenty-front:lingui:extract --parallel=1 --workers=1 && \
+    THREADS_WORKER_INIT_TIMEOUT=60000 NX_DAEMON=false \
+      npx nx run twenty-front:lingui:compile --parallel=1 --workers=1
 # To skip the memory-intensive frontend build, pre-build on the host:
 #   npx nx build twenty-front
 # The check below will use packages/twenty-front/build/ if it already exists.
