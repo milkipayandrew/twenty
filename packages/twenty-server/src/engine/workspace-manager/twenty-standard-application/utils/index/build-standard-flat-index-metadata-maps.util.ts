@@ -3,6 +3,15 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { buildAppraisalStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-appraisal-standard-flat-index-metadata.util';
+import { buildPropertyStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-property-standard-flat-index-metadata.util';
+import { buildCompsearchStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-compsearch-standard-flat-index-metadata.util';
+import { buildComparableStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-comparable-standard-flat-index-metadata.util';
+import { buildReportStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-report-standard-flat-index-metadata.util';
+import { buildReportSectionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-report-section-standard-flat-index-metadata.util';
+import { buildReportNodeStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-report-node-standard-flat-index-metadata.util';
+import { buildArtifactStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-artifact-standard-flat-index-metadata.util';
+import { buildReportNodeEdgeStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-report-node-edge-standard-flat-index-metadata.util';
 import { buildAttachmentStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-attachment-standard-flat-index-metadata.util';
 import { buildBlocklistStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-blocklist-standard-flat-index-metadata.util';
 import { buildCalendarChannelEventAssociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-channel-event-association-standard-flat-index-metadata.util';
@@ -36,6 +45,15 @@ type StandardIndexBuilder<P extends AllStandardObjectName> = (
 ) => Record<string, FlatIndexMetadata>;
 
 const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
+  appraisal: buildAppraisalStandardFlatIndexMetadatas,
+  property: buildPropertyStandardFlatIndexMetadatas,
+  compsearch: buildCompsearchStandardFlatIndexMetadatas,
+  comparable: buildComparableStandardFlatIndexMetadatas,
+  report: buildReportStandardFlatIndexMetadatas,
+  reportSection: buildReportSectionStandardFlatIndexMetadatas,
+  reportNode: buildReportNodeStandardFlatIndexMetadatas,
+  reportNodeEdge: buildReportNodeEdgeStandardFlatIndexMetadatas,
+  artifact: buildArtifactStandardFlatIndexMetadatas,
   attachment: buildAttachmentStandardFlatIndexMetadatas,
   blocklist: buildBlocklistStandardFlatIndexMetadatas,
   calendarChannelEventAssociation:

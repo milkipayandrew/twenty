@@ -3,6 +3,11 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { computeStandardAppraisalViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-appraisal-view-fields.util';
+import { computeStandardPropertyViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-property-view-fields.util';
+import { computeStandardCompsearchViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-compsearch-view-fields.util';
+import { computeStandardComparableViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-comparable-view-fields.util';
+import { computeStandardReportViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-report-view-fields.util';
 import { computeStandardAttachmentViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-attachment-view-fields.util';
 import { computeStandardBlocklistViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-blocklist-view-fields.util';
 import { computeStandardCalendarChannelEventAssociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-channel-event-association-view-fields.util';
@@ -37,6 +42,11 @@ type StandardViewFieldBuilder<P extends AllStandardObjectName> = (
 ) => Record<string, FlatViewField>;
 
 const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
+  appraisal: computeStandardAppraisalViewFields,
+  property: computeStandardPropertyViewFields,
+  compsearch: computeStandardCompsearchViewFields,
+  comparable: computeStandardComparableViewFields,
+  report: computeStandardReportViewFields,
   attachment: computeStandardAttachmentViewFields,
   blocklist: computeStandardBlocklistViewFields,
   calendarChannelEventAssociation:

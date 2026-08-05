@@ -172,6 +172,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     RefreshTokenService,
     CreateMessageChannelService,
     CreateCalendarChannelService,
+    SignInUpService,
   ],
 })
 export class AuthModule {}

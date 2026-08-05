@@ -45,6 +45,41 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier,
     position: 5,
   },
+  allAppraisals: {
+    universalIdentifier: '4c814b3e-2901-41b6-b995-f7847ecb945d',
+    type: NavigationMenuItemType.OBJECT,
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.appraisal.views.allAppraisals.universalIdentifier,
+    position: 7,
+  },
+  allProperties: {
+    universalIdentifier: 'ff614c45-1dc8-4d95-a3b6-0920b5f80b53',
+    type: NavigationMenuItemType.OBJECT,
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.property.views.allProperties.universalIdentifier,
+    position: 8,
+  },
+  allCompsearches: {
+    universalIdentifier: '58617ace-2c7c-4b09-b11d-a837fb38050e',
+    type: NavigationMenuItemType.OBJECT,
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.compsearch.views.allCompsearches.universalIdentifier,
+    position: 9,
+  },
+  allComparables: {
+    universalIdentifier: '5c7256bc-1137-4d93-ac99-bf44d5fdde19',
+    type: NavigationMenuItemType.OBJECT,
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.comparable.views.allComparables.universalIdentifier,
+    position: 10,
+  },
+  allReports: {
+    universalIdentifier: '1773dd0b-cbf6-467e-90c6-e19fd65aa19a',
+    type: NavigationMenuItemType.OBJECT,
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.report.views.allReports.universalIdentifier,
+    position: 11,
+  },
   workflowsFolder: {
     universalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     type: NavigationMenuItemType.FOLDER,

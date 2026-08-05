@@ -45,8 +45,22 @@ register_background_jobs() {
     fi
 }
 
+create_demo_workspace() {
+    if [ "${SEED_DEMO_WORKSPACE}" != "true" ]; then
+        return
+    fi
+
+    echo "Creating demo workspace (SEED_DEMO_WORKSPACE=true)..."
+    if yarn command:prod workspace:create-demo; then
+        echo "Demo workspace step completed."
+    else
+        echo "Warning: Failed to create demo workspace, but continuing startup..."
+    fi
+}
+
 setup_and_migrate_db
 register_background_jobs
+create_demo_workspace
 
 # Continue with the original Docker command
 exec "$@"

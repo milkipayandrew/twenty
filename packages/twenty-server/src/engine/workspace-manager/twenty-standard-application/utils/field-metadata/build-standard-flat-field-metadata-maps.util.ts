@@ -5,6 +5,15 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
+import { buildAppraisalStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-appraisal-standard-flat-field-metadata.util';
+import { buildPropertyStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-property-standard-flat-field-metadata.util';
+import { buildCompsearchStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-compsearch-standard-flat-field-metadata.util';
+import { buildComparableStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-comparable-standard-flat-field-metadata.util';
+import { buildReportStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-report-standard-flat-field-metadata.util';
+import { buildReportSectionStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-report-section-standard-flat-field-metadata.util';
+import { buildReportNodeStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-report-node-standard-flat-field-metadata.util';
+import { buildArtifactStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-artifact-standard-flat-field-metadata.util';
+import { buildReportNodeEdgeStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-report-node-edge-standard-flat-field-metadata.util';
 import { buildAttachmentStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util';
 import { buildBlocklistStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util';
 import { buildCalendarChannelEventAssociationStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util';
@@ -40,6 +49,15 @@ type StandardFieldBuilder<P extends AllStandardObjectName> = (
 ) => Record<string, FlatFieldMetadata>;
 
 const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
+  appraisal: buildAppraisalStandardFlatFieldMetadatas,
+  property: buildPropertyStandardFlatFieldMetadatas,
+  compsearch: buildCompsearchStandardFlatFieldMetadatas,
+  comparable: buildComparableStandardFlatFieldMetadatas,
+  report: buildReportStandardFlatFieldMetadatas,
+  reportSection: buildReportSectionStandardFlatFieldMetadatas,
+  reportNode: buildReportNodeStandardFlatFieldMetadatas,
+  reportNodeEdge: buildReportNodeEdgeStandardFlatFieldMetadatas,
+  artifact: buildArtifactStandardFlatFieldMetadatas,
   attachment: buildAttachmentStandardFlatFieldMetadatas,
   blocklist: buildBlocklistStandardFlatFieldMetadatas,
   calendarChannelEventAssociation:

@@ -4,6 +4,15 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 
 export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
+  appraisal: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  property: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  compsearch: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  comparable: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  report: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  reportSection: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  reportNode: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  reportNodeEdge: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  artifact: [{ name: 'name', type: FieldMetadataType.TEXT }],
   attachment: [{ name: 'name', type: FieldMetadataType.TEXT }],
   blocklist: [{ name: 'handle', type: FieldMetadataType.TEXT }],
   calendarChannelEventAssociation: [

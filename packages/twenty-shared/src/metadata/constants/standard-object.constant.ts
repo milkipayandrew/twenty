@@ -13,6 +13,704 @@ import { buildStandardObjectSystemFields } from '@/metadata/utils/internal/build
 //   The name field is a default field, not a system field, and keeps its
 //   hardcoded universal identifier.
 export const STANDARD_OBJECTS = {
+  appraisal: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.appraisal,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.appraisal,
+      ),
+      name: { universalIdentifier: '47de06b5-e89c-4baa-9ef5-5be195fb8dff' },
+      status: {
+        universalIdentifier: '8bfa5a81-0a19-4093-a343-9d0debdca5cc',
+      },
+      flowState: {
+        universalIdentifier: '41d412d1-b790-4ae6-9765-b12f09d31055',
+      },
+      subjectAddress: {
+        universalIdentifier: 'b2f2ba37-83cc-4d40-9777-8a7914fc4cf5',
+      },
+      bedrooms: {
+        universalIdentifier: '7337dc78-d19d-44bd-99ca-e0263a146512',
+      },
+      bathrooms: {
+        universalIdentifier: '3e5f0f62-6c58-4c65-aaa7-67cbe16c456a',
+      },
+      livingAreaGla: {
+        universalIdentifier: '5eb6831b-d98c-4d86-a9f8-12a28ffd35a4',
+      },
+      yearBuilt: {
+        universalIdentifier: '7e7c34fb-2d86-4cb8-bfe7-aa01534c5c8c',
+      },
+      lotSize: {
+        universalIdentifier: '88d82e7f-8488-442d-a2d9-aebd1e7ad7d5',
+      },
+      style: {
+        universalIdentifier: 'ac875e3d-7344-442e-9f29-c7f8f261feb1',
+      },
+      quality: {
+        universalIdentifier: 'f867d500-bca3-4526-a4a3-88a00bea7770',
+      },
+      conditionRating: {
+        universalIdentifier: '83b91c9d-b632-41f3-a329-24e8f5b55c57',
+      },
+      effectiveAge: {
+        universalIdentifier: '9a36faa8-9aac-4698-b771-0efd932a9df9',
+      },
+      garage: {
+        universalIdentifier: '733cdb41-38d4-4d6c-bfbd-7f4fe0375ff9',
+      },
+      fireplace: {
+        universalIdentifier: 'c510068b-f677-42ec-95e2-72130c146836',
+      },
+      heatingCooling: {
+        universalIdentifier: 'e7da7abd-ef15-49b9-bffa-076162835b01',
+      },
+      amenitiesOutbuildings: {
+        universalIdentifier: 'fad08ee2-647a-45a4-a013-3839fd7e6c51',
+      },
+      subjectView: {
+        universalIdentifier: '154c818a-8af5-47c8-bfa7-3a68492f6b69',
+      },
+      transactionFha: {
+        universalIdentifier: '3afe1ffd-e28a-4086-94f1-c9fdc7c29820',
+      },
+      appraisalNotes: {
+        universalIdentifier: '3d9e6815-3a91-4fb8-b8d2-582592738431',
+      },
+      compsearch: {
+        universalIdentifier: '0e82d8b4-e274-46e6-9975-5a44ef7c6ffb',
+      },
+      report: {
+        universalIdentifier: '98b60f79-a801-442c-9561-63f10cc891b2',
+      },
+      subjectProperty: {
+        universalIdentifier: 'fdbcef5e-7848-4142-962c-40fed7fa6a17',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '27240353-d5e6-4d8a-b4fd-701407f72057',
+      },
+    },
+    views: {
+      allAppraisals: {
+        universalIdentifier: '790c3778-78bd-4884-9b14-a2060a48384b',
+        viewFields: {
+          name: {
+            universalIdentifier: '6d509bf5-f3e7-451e-83a6-e4700b7cbfa2',
+          },
+          status: {
+            universalIdentifier: '4fa6c948-3b9b-4712-b811-09805ab9fce7',
+          },
+          flowState: {
+            universalIdentifier: '7a3a8c39-3d90-4937-9481-9332f670b7c4',
+          },
+          createdBy: {
+            universalIdentifier: '1fbdc990-a021-4d8f-a949-4b12b5bb1192',
+          },
+          createdAt: {
+            universalIdentifier: '458d7045-3a6a-4040-b8e3-aade8ad12343',
+          },
+          updatedAt: {
+            universalIdentifier: 'dd4b2360-7aa1-4f05-9837-35f43a122013',
+          },
+        },
+      },
+    },
+  },
+  property: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.property,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.property,
+      ),
+      name: { universalIdentifier: '05eb100a-9870-4352-9046-96ad02161f83' },
+      age: { universalIdentifier: 'de4deb27-ada5-4bb9-b753-6e39b7360fc6' },
+      agentRemarks: {
+        universalIdentifier: '06df38fa-e44f-4ac9-8a5e-ba3774c4f395',
+      },
+      apxAboveGradeFin: {
+        universalIdentifier: '87d5486e-c4c4-422a-8988-889b00e7dff2',
+      },
+      apxAboveGradeUnfin: {
+        universalIdentifier: 'bb6dbbd0-aadd-41d5-a66b-f156db8fb713',
+      },
+      apxBelowGradeFin: {
+        universalIdentifier: '1ae50cfb-84db-4366-9d0c-bf8511f5f6f6',
+      },
+      apxBelowGradeUnfin: {
+        universalIdentifier: '1cf4916a-c06a-402d-9c5a-5847d470e3f5',
+      },
+      apxFinSqft: {
+        universalIdentifier: '4c1012cc-3c8c-4627-b6c8-9a7514cf9506',
+      },
+      apxUnfinSqft: {
+        universalIdentifier: 'adfd33b5-949c-4317-beba-2a3efd53fc4c',
+      },
+      city: { universalIdentifier: '2f8274a7-8062-4a10-bf37-c43edf5bc18d' },
+      class: { universalIdentifier: '444cf66b-f1ca-4ee0-9b88-ecdc04b230a2' },
+      closingDate: {
+        universalIdentifier: '8d3bd779-9f22-4cc6-a437-a338bea8bc25',
+      },
+      concessions: {
+        universalIdentifier: '549c81d7-4848-436c-85c7-203947494379',
+      },
+      construction: {
+        universalIdentifier: '9a9d20cb-610f-4ef5-9b8d-76e7501f58ca',
+      },
+      cooling: { universalIdentifier: 'a514bae7-ca20-466e-87da-7faf4d46b08b' },
+      county: { universalIdentifier: 'adc389ff-a1d0-4750-aadd-985f6e6460dc' },
+      dom: { universalIdentifier: '23abadfe-97e0-4c07-a12b-8f7881cc0337' },
+      fencing: { universalIdentifier: '50adf80d-87c5-4ca3-bea2-6775b40aedce' },
+      financingRemarks: {
+        universalIdentifier: 'dc2bc095-0729-4fb6-9d50-8bf150818f42',
+      },
+      fireplace: {
+        universalIdentifier: 'b226a771-f93b-4985-8913-af7129be235c',
+      },
+      garageCapacity: {
+        universalIdentifier: '5ef9ede6-4cb8-4380-a8f4-a43e12f9b3eb',
+      },
+      garageDimensions: {
+        universalIdentifier: '4f3db53c-d66a-460b-bff7-230e16408a2d',
+      },
+      garageType: {
+        universalIdentifier: 'eacb6c15-3778-4b0c-9a3b-215005b720f4',
+      },
+      gradeSchool: {
+        universalIdentifier: '40618f2c-cac9-49d0-95ee-966f36cb228f',
+      },
+      heating: { universalIdentifier: '63b71f43-04df-41b8-af54-20d89183676a' },
+      howSold: { universalIdentifier: '6adc5060-a073-442d-b85b-863ff7634721' },
+      jrHigh: { universalIdentifier: '59404ee1-abc8-4f36-b2c3-fafde5f2b98b' },
+      kitchenFeatures: {
+        universalIdentifier: '018038dc-da2d-4def-9117-07bbe07afe78',
+      },
+      landSize: { universalIdentifier: '05be78ae-bde1-4c1f-a258-a547083f689e' },
+      landUse: { universalIdentifier: '1e2c9653-0d4f-4e0a-a9fb-d41850616fc3' },
+      level: { universalIdentifier: '57a53b9b-7e7a-4076-879a-6b87771f8fe9' },
+      lotFeatures: {
+        universalIdentifier: '87edab59-082b-4321-a877-ed710f5602d9',
+      },
+      lotLength: {
+        universalIdentifier: '327d3ff3-bbcf-48fd-9292-025b9dba5641',
+      },
+      lotWidth: { universalIdentifier: '4b1fec18-d623-4f55-861e-11a37de84c32' },
+      numAcres: { universalIdentifier: 'e875b323-cdd8-4ae3-8325-01330eba3c6f' },
+      numBaths: { universalIdentifier: '8ff5d95d-44b5-41c1-831a-d4b050e05e82' },
+      numBeds: { universalIdentifier: '659b63e9-090e-4664-a98f-0928f4820712' },
+      parcelNumber: {
+        universalIdentifier: '39b99c39-c853-486d-9023-33e24fdc1e38',
+      },
+      pendingDate: {
+        universalIdentifier: 'bc53f18a-41c5-4e1b-9cc0-ea89ac96e4d6',
+      },
+      photos: { universalIdentifier: 'f71a580a-51e2-4bfd-83d0-f72587b14a69' },
+      remarks: { universalIdentifier: '266fd141-e5fc-4c07-835e-90ae30c4a8d9' },
+      roof: { universalIdentifier: 'f3bb18e2-1256-40cf-9d93-c8695cfe559d' },
+      salesHistory: {
+        universalIdentifier: '9b63778c-fe2e-44ab-a777-7f6165bc0745',
+      },
+      parcelGeojson: {
+        universalIdentifier: 'bbd453fc-9849-431d-a979-dd201d5fb4b3',
+      },
+      schoolDistrict: {
+        universalIdentifier: 'a5042fe3-fdb3-49f6-a4d0-92d9a59e2176',
+      },
+      sewer: { universalIdentifier: '4740c464-d661-4b90-8ff8-e0ddb81a85f3' },
+      sourceId: { universalIdentifier: '308e546c-1c74-4690-9cda-82d676afa4bf' },
+      sprinkler: {
+        universalIdentifier: '4a9e297e-c199-47c7-b1fa-21b2539a654d',
+      },
+      srHigh: { universalIdentifier: 'b40863ad-a537-4759-82d6-786da9f3886f' },
+      state: { universalIdentifier: '916c4330-2020-4c7a-9d24-6ab45919ca26' },
+      status: { universalIdentifier: 'f83ce382-a1c2-494a-84f7-96bf27cbd73e' },
+      structureFeatures: {
+        universalIdentifier: 'eb82a0f6-6cad-4b5a-ad1e-87d03887e5dc',
+      },
+      subdivision: {
+        universalIdentifier: '134c5aaf-d036-4278-81d9-f05dfee3a4d3',
+      },
+      water: { universalIdentifier: '77443d53-7ec5-4d9b-a4b3-3d9890f55a1d' },
+      waterHeater: {
+        universalIdentifier: '7f4db632-d0a1-434d-9333-6ea52841a42d',
+      },
+      yearBuilt: {
+        universalIdentifier: 'a17fee5c-d4a9-4197-be47-be6ce3e65d7d',
+      },
+      zip: { universalIdentifier: '9214d3fe-a63a-4386-902e-5b9d44165f8b' },
+      zoning: { universalIdentifier: '14d2ee9d-63e8-4f91-a5df-9986817ab73f' },
+      subjectOfAppraisals: {
+        universalIdentifier: 'a23235a8-1586-4117-a496-e16e893bfef8',
+      },
+      comparables: {
+        universalIdentifier: '8a726a19-ac31-48d1-98bf-ca67f827c520',
+      },
+      artifacts: {
+        universalIdentifier: 'a614c0e1-bb43-485f-96fe-a159157835c4',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '06304cca-fb8a-4918-a129-7d078b30b3e7',
+      },
+    },
+    views: {
+      allProperties: {
+        universalIdentifier: 'fdb04718-dedf-4dcf-b948-e0b7f188842a',
+        viewFields: {
+          name: {
+            universalIdentifier: '04233a2a-c6b2-4d85-a656-d4e33aa333eb',
+          },
+          createdBy: {
+            universalIdentifier: '0481fc4f-dd97-4025-aa92-6043d5dd70b0',
+          },
+          createdAt: {
+            universalIdentifier: 'c1edcb93-5ed3-43bf-b1dd-afd58f8338c8',
+          },
+          updatedAt: {
+            universalIdentifier: '524ce2c3-204b-405d-b02f-ddbd21d1e17b',
+          },
+          updatedBy: {
+            universalIdentifier: '161801d5-a9ce-4ca5-b97f-06d99fe9393d',
+          },
+          photos: {
+            universalIdentifier: 'bfcd892e-9dd4-4ef4-a90f-b7da8597a408',
+          },
+        },
+      },
+    },
+  },
+  compsearch: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.compsearch,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.compsearch,
+      ),
+      name: { universalIdentifier: '0aeac6dd-8f7c-495f-b1b7-6a7e989659a1' },
+      adjustmentReport: {
+        universalIdentifier: '9662ada3-22ef-4c9a-9f7f-a27fd3322d70',
+      },
+      rateCard: {
+        universalIdentifier: '084cf2c7-85d5-4da5-ada1-2305e71e2a7a',
+      },
+      reconciledValue: {
+        universalIdentifier: '4925b6d0-8563-4751-8125-5081386784b7',
+      },
+      reconciliation: {
+        universalIdentifier: 'ab550daa-d5ff-4303-bb78-3a9a47f1c178',
+      },
+      reconciliationMeta: {
+        universalIdentifier: 'b23a9b01-696c-4a7c-a720-b0eccfffefc8',
+      },
+      reconSensitivityAnalysis: {
+        universalIdentifier: 'e74358ee-e546-4715-8496-8d000b8dedec',
+      },
+      reconWeightMatrix: {
+        universalIdentifier: '6168953e-f361-4666-96bd-eaa6eae1862e',
+      },
+      scoreReport: {
+        universalIdentifier: '5624122e-5d4e-48a5-937f-23a9014a791a',
+      },
+      searchSummary: {
+        universalIdentifier: 'a921d1e5-6759-4a45-9a1f-b6ccf4d2e2e1',
+      },
+      selectedCompsReport: {
+        universalIdentifier: 'd10d8bee-15e4-4fe7-8f07-78377a5dddd8',
+      },
+      appraisals: {
+        universalIdentifier: '9192ebb6-af4b-4992-9d26-54c9e2952671',
+      },
+      report: {
+        universalIdentifier: 'e674bdaa-127f-46f8-bba0-afc452704b06',
+      },
+      selected: {
+        universalIdentifier: 'fe175682-95f5-453f-a8b0-974265859fa9',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '39855ebc-1c3d-4e9c-a768-6878beac705f',
+      },
+    },
+    views: {
+      allCompsearches: {
+        universalIdentifier: '6581d59a-9f83-40ed-935f-0cdfdd1bc861',
+        viewFields: {
+          name: {
+            universalIdentifier: '92d87203-0ece-4c25-8da8-035ec8ebba3c',
+          },
+          createdBy: {
+            universalIdentifier: '0c207f6d-4ccc-4f34-a89f-37638aa4783a',
+          },
+          createdAt: {
+            universalIdentifier: 'b330b3b8-7f98-49b0-8e46-8128ff40beea',
+          },
+          updatedAt: {
+            universalIdentifier: 'a1b5eb8d-2429-4862-8886-8abf2bccd6ca',
+          },
+          updatedBy: {
+            universalIdentifier: 'f34f8427-76ba-4ac4-b1e7-6c26f802b213',
+          },
+        },
+      },
+    },
+  },
+  comparable: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.comparable,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.comparable,
+      ),
+      name: { universalIdentifier: '4d317c9e-efd5-4e8f-bde8-f9525bd0895e' },
+      adjustmentMeta: {
+        universalIdentifier: '318bafe8-afb5-47ac-987e-fad926b644c9',
+      },
+      compAddress: {
+        universalIdentifier: 'e993d08a-43bc-4699-9bc4-8069417aff3c',
+      },
+      descriptionAnalysis: {
+        universalIdentifier: '78de5869-b65e-4583-90a3-8cd251c7a662',
+      },
+      finalAdjustedPrice: {
+        universalIdentifier: '3f52e1f7-b81b-4819-b799-f9b495d25af0',
+      },
+      imageAnalysis: {
+        universalIdentifier: 'c210a7a0-e4fc-4ef8-9dca-3c9b8369c90b',
+      },
+      mlsNumber: {
+        universalIdentifier: 'ab943793-e344-4997-ad08-f69b5fa0a51b',
+      },
+      pAdjAdu: {
+        universalIdentifier: '8fb783ed-d8b1-40ec-b101-5f1d19f689a7',
+      },
+      pAdjAgeEffectiveAge: {
+        universalIdentifier: 'e3f12cd9-90d1-4eee-9600-000ec639584c',
+      },
+      pAdjBasement: {
+        universalIdentifier: '942b1949-a708-4d4b-ac82-affccc8520a0',
+      },
+      pAdjBathrooms: {
+        universalIdentifier: '958da404-b71e-4949-905c-274bbb3252ac',
+      },
+      pAdjBedrooms: {
+        universalIdentifier: '57bc881c-995c-4f5c-b900-ab0ea0d1882a',
+      },
+      pAdjCondition: {
+        universalIdentifier: 'bcb2523b-a35e-4a82-9e33-8327d8b49c02',
+      },
+      pAdjDesignStyle: {
+        universalIdentifier: '20d84665-7f12-4b29-803e-2caafaf49b89',
+      },
+      pAdjEnergyEfficiency: {
+        universalIdentifier: 'db8db178-ca31-4a94-a282-34aa29d065b8',
+      },
+      pAdjExternalObsolescence: {
+        universalIdentifier: '1d62f8c7-a3bf-4ca1-906e-c53c13ca51cf',
+      },
+      pAdjFireplace: {
+        universalIdentifier: '4b2ec8dc-934a-47dc-920a-1fd5035a2f06',
+      },
+      pAdjFunctionalObsolescence: {
+        universalIdentifier: 'a5ec4611-374e-421a-b285-c8c657c03f95',
+      },
+      pAdjGarage: {
+        universalIdentifier: 'fdfb7555-0f31-45ee-8637-7206c09a429f',
+      },
+      pAdjGla: {
+        universalIdentifier: '4db3acec-cc33-446e-947f-1857b4d77395',
+      },
+      pAdjHeatingCoolingHvac: {
+        universalIdentifier: '02db9340-f5a1-4769-aeb0-14c4c5d9847b',
+      },
+      pAdjHoaFees: {
+        universalIdentifier: '95325ed6-4720-4522-8871-641d1c752e6f',
+      },
+      pAdjLocation: {
+        universalIdentifier: '9354f23e-56eb-45e6-9fd7-7ffe126b9df9',
+      },
+      pAdjLotSize: {
+        universalIdentifier: '910cc122-52a9-408b-9c4d-a4fe5740531a',
+      },
+      pAdjOutbuildings: {
+        universalIdentifier: 'bd823f35-bd41-40d9-a662-c3c825b262d0',
+      },
+      pAdjPatioDeckPorch: {
+        universalIdentifier: 'ab5b2dde-8ffa-4a76-bca3-1b7944e069db',
+      },
+      pAdjPoolSpa: {
+        universalIdentifier: 'ae94bf37-28f0-418c-9034-222c6a3f1ed6',
+      },
+      pAdjQuality: {
+        universalIdentifier: '500be626-70f7-4e04-ba2a-ed5472a6902c',
+      },
+      pAdjSolar: {
+        universalIdentifier: 'd1f05721-af1d-4584-838b-c697c68e3efa',
+      },
+      pAdjView: {
+        universalIdentifier: '4104618e-d5ea-4452-9e81-dc49e8dac5b3',
+      },
+      reconMeta: {
+        universalIdentifier: '3859f5d4-9c3a-4a33-baf2-b07eedc7c5a5',
+      },
+      reconWeightPercent: {
+        universalIdentifier: '2757ab5b-63c6-42b2-901f-6c6edf389ab5',
+      },
+      salePrice: {
+        universalIdentifier: '89ea292a-c84b-4075-b6d4-9cd35d519ffd',
+      },
+      searchRank: {
+        universalIdentifier: '803facfc-6f58-4926-ab2f-839dd65a8a5d',
+      },
+      searchScoring: {
+        universalIdentifier: '19d14eb8-eac7-4c36-bcdb-a2f2d4bb0a51',
+      },
+      synthesis: {
+        universalIdentifier: '5d74740b-c5a9-4061-bd35-4a1969a32066',
+      },
+      transAdjConditions: {
+        universalIdentifier: '41f3fa33-bb4b-4162-a5f8-c33f705aa929',
+      },
+      transAdjExpenditures: {
+        universalIdentifier: 'abd7a88c-4b0a-453d-9e47-60fca9376cdd',
+      },
+      transAdjFinancing: {
+        universalIdentifier: '8ac89203-01c8-40d6-8962-884665f56d51',
+      },
+      transAdjRights: {
+        universalIdentifier: 'fb3f58d5-c537-4dae-9cc9-87d1cba0b1bf',
+      },
+      transAdjTime: {
+        universalIdentifier: '2b6916d7-d169-412e-a848-df76ec1a7c73',
+      },
+      reportNodes: {
+        universalIdentifier: 'cb912a64-e1f7-4323-82c1-cd65fc32b4d8',
+      },
+      property: {
+        universalIdentifier: '65a5c294-0f09-4cf0-815d-a024107f5525',
+      },
+      selectedInCompsearch: {
+        universalIdentifier: '17f30981-f40a-4c0b-86cd-e00735fa1c3d',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '4fe2b9ae-4113-4358-9ef1-5e59ecc78774',
+      },
+    },
+    views: {
+      allComparables: {
+        universalIdentifier: 'c7e214ef-ee0f-46c9-93e7-f8d3849a83b5',
+        viewFields: {
+          name: {
+            universalIdentifier: '68345620-ad29-4bcd-906c-8a7655589971',
+          },
+          createdBy: {
+            universalIdentifier: '76d0ec62-7a4f-4d80-8598-ac4d12edcc8d',
+          },
+          createdAt: {
+            universalIdentifier: '5abb06ce-0a05-4ec4-95c7-e298ce345686',
+          },
+          updatedAt: {
+            universalIdentifier: '8898b769-07f4-4c6a-ab70-cdbe17e4a3dd',
+          },
+          updatedBy: {
+            universalIdentifier: '0a8f3f7e-70da-41fe-951a-661cbd7be2bf',
+          },
+        },
+      },
+    },
+  },
+  report: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.report,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.report,
+      ),
+      name: { universalIdentifier: '1bda7ba3-eed6-4cf6-8dff-2a4ed2f1acf1' },
+      report: { universalIdentifier: '114fc43e-cd67-4018-b995-cbe674cfa57d' },
+      rootNode: {
+        universalIdentifier: 'c966ce96-3234-47a8-9a3d-9a37aa5285fa',
+      },
+      sections: {
+        universalIdentifier: '91861032-4796-411e-a80a-235f8bfd4cb1',
+      },
+      nodes: {
+        universalIdentifier: '97ea3d20-80df-403d-affb-90f251171100',
+      },
+      appraisals: {
+        universalIdentifier: 'c8c2dc4e-7e54-4d7e-aab0-d7aa354f4f92',
+      },
+      compsearches: {
+        universalIdentifier: '6a8098ed-2cdb-4d16-866a-13f6b1752472',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: 'cf8aa6e3-097c-44d2-b0b9-ea15f8e4e275',
+      },
+    },
+    views: {
+      allReports: {
+        universalIdentifier: 'ef653b4e-e191-45ed-b442-1ecf3a9652bc',
+        viewFields: {
+          name: {
+            universalIdentifier: '6841d39a-51d1-4c7b-96de-a189f5159318',
+          },
+          createdBy: {
+            universalIdentifier: '401faeef-c05c-441c-87b4-a760639f631b',
+          },
+          createdAt: {
+            universalIdentifier: 'b8998720-a900-4b6a-bb30-65c40e6b1b67',
+          },
+          updatedAt: {
+            universalIdentifier: '313db655-b2da-45d3-8923-e808e1aaae9b',
+          },
+          updatedBy: {
+            universalIdentifier: 'a96dfbff-5787-43ea-ba06-fb87cf2972ae',
+          },
+        },
+      },
+    },
+  },
+  reportSection: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportSection,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportSection,
+      ),
+      name: { universalIdentifier: '701d0684-5c20-4d2d-8b6f-aca8703e7758' },
+      title: { universalIdentifier: 'b646ffb7-7c16-46cf-bc66-81f8721fb975' },
+      subtitle: {
+        universalIdentifier: '683b8f70-5d76-4909-82c1-940bf312498a',
+      },
+      factorsLabel: {
+        universalIdentifier: '2313ff62-e8c9-4302-9161-131e6c5662ca',
+      },
+      separatorLabel: {
+        universalIdentifier: 'f20a85d9-3f7b-4766-8fa9-3a5214520df2',
+      },
+      sectionOrder: {
+        universalIdentifier: '84c21e85-76b1-43f1-ad7a-11bde048d3da',
+      },
+      continuation: {
+        universalIdentifier: 'd7b041ed-a098-4a69-9f84-a3d05651b32d',
+      },
+      layout: { universalIdentifier: '9e5db766-1a56-4993-8187-e89bdd4c0543' },
+      render: { universalIdentifier: 'a47118bf-5d51-4287-b8dc-b96fbca04a3a' },
+      report: { universalIdentifier: 'e97d73ba-0e64-4dc5-bb75-7210aec02995' },
+      nodes: { universalIdentifier: '869c9587-df1d-4acf-a025-92c14a6c4fa6' },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '5b3a41e3-be77-4bda-a722-5a86ae24bfb3',
+      },
+    },
+  },
+  reportNode: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportNode,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportNode,
+      ),
+      name: { universalIdentifier: 'a24078f5-31da-43f1-bf9e-e75ac34b0eb0' },
+      display: {
+        universalIdentifier: 'b9338c58-0d67-4e05-84d6-3daacfaa8e8b',
+      },
+      nodeKey: {
+        universalIdentifier: '118d1fe9-b92f-4b61-9c55-8e84eb1f0de1',
+      },
+      nodeLabel: {
+        universalIdentifier: '4ba202f9-73eb-4ccd-b4dd-a0ff6e851e48',
+      },
+      nodeRelation: {
+        universalIdentifier: '88dffcff-477e-423e-aa4c-6e1b3f5498bb',
+      },
+      rawValue: {
+        universalIdentifier: 'fecab7d2-1386-4e5f-92db-1e34f244a711',
+      },
+      sourceExcerpt: {
+        universalIdentifier: '213e03bf-d833-413b-8084-51de656e1552',
+      },
+      sourceFile: {
+        universalIdentifier: '60ba7782-7425-4756-94f8-4059122060b9',
+      },
+      sourceJsonPath: {
+        universalIdentifier: '60bc7bde-ed4a-4213-807c-2fdd2515a160',
+      },
+      detail: { universalIdentifier: 'b6fdf91d-5589-4827-9647-a9241278a106' },
+      derivation: {
+        universalIdentifier: '5c7bf893-2589-4d57-8a51-2817ab0bfe5d',
+      },
+      isRoot: { universalIdentifier: 'cfd8b2ea-ee1b-4cd6-8e83-da90b8364492' },
+      report: { universalIdentifier: 'b226cd6b-3166-46c5-9d9f-5b46f8ff9758' },
+      section: {
+        universalIdentifier: '1c768478-e155-4a94-9e4f-691ec888915e',
+      },
+      comparable: {
+        universalIdentifier: 'fca615c9-bf5d-414e-b3fb-c6b8103cd6f4',
+      },
+      childEdges: {
+        universalIdentifier: '3fc70bc0-a9da-4084-8742-029dc946f843',
+      },
+      parentEdges: {
+        universalIdentifier: '24e0445d-302b-4661-9244-a63b27ca110a',
+      },
+      rootOfReports: {
+        universalIdentifier: '391b7328-f356-4232-8a51-87a3ddb06ec0',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: 'fe78d776-cea5-4369-93c7-c82be4d69a6d',
+      },
+    },
+  },
+  reportNodeEdge: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportNodeEdge,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportNodeEdge,
+      ),
+      name: { universalIdentifier: '67802cfa-315c-4585-9003-d9da924b47e2' },
+      childOrder: {
+        universalIdentifier: 'a9009b53-738a-40b6-8e3e-d0a90695dd04',
+      },
+      parent: { universalIdentifier: 'b33f1020-c22a-456b-97df-eaac13ac1efb' },
+      child: { universalIdentifier: '36983c09-69bd-48c7-b3a3-dfc0cdf000f4' },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '56c747fa-c176-4c0e-a042-95e8f7e9ba95',
+      },
+    },
+  },
+  artifact: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.artifact,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.artifact,
+      ),
+      name: { universalIdentifier: 'ee71c199-5232-4cd0-9e99-9cc93d2d85d8' },
+      description: {
+        universalIdentifier: 'd2cb2d12-e33e-4a1a-b7b0-a5f8baee8547',
+      },
+      fileType: {
+        universalIdentifier: 'c08f101e-7769-4270-888d-22e3b959d5aa',
+      },
+      attachment: {
+        universalIdentifier: '5a4be082-ddc5-4edc-a2f2-640ecb4d5897',
+      },
+      property: {
+        universalIdentifier: '2cb25565-aaa7-47af-a8a3-5fcf7293af89',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: 'b9ff95d3-9541-49e9-b8d4-9526da0ef99b',
+      },
+    },
+  },
   attachment: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
     fields: {

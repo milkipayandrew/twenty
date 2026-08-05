@@ -71,13 +71,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
-import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
-import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
-import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-opportunities.util';
-import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-people.util';
 import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
-import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
-import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -870,27 +864,15 @@ export class WorkspaceService {
 
   private async prefillCreatedWorkspaceRecords({
     workspaceId,
-    schemaName,
   }: {
     workspaceId: string;
     schemaName: string;
   }): Promise<void> {
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatPageLayoutMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: [
-            'flatObjectMetadataMaps',
-            'flatFieldMetadataMaps',
-            'flatPageLayoutMaps',
-          ],
-        },
-      );
-
+    // New workspaces start EMPTY: we intentionally do not prefill any demo
+    // records (companies, people, opportunities, dashboards, workflows) or
+    // their command-menu items. We still seed the "create company when adding
+    // a new person" automation logic function and install pre-installed apps,
+    // since those are functional scaffolding, not sample data.
     await this.prefillLogicFunctionService.ensureSeeded({
       workspaceId,
       definitions:
@@ -898,60 +880,6 @@ export class WorkspaceService {
           workspaceId,
         ),
     });
-
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-
-    try {
-      await queryRunner.startTransaction();
-
-      await prefillCompanies(queryRunner.manager, schemaName);
-
-      await prefillPeople(queryRunner.manager, schemaName);
-
-      await prefillWorkflows(
-        queryRunner.manager,
-        workspaceId,
-        schemaName,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
-
-      await prefillOpportunities(queryRunner.manager, schemaName);
-
-      await prefillDashboards(
-        queryRunner.manager,
-        schemaName,
-        flatPageLayoutMaps,
-      );
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
-
-    try {
-      await prefillWorkflowCommandMenuItems({
-        workspaceId,
-        applicationService: this.applicationService,
-        flatEntityMapsCacheService: this.flatEntityMapsCacheService,
-        workspaceMigrationValidateBuildAndRunService:
-          this.workspaceMigrationValidateBuildAndRunService,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Non-critical: failed to prefill workflow command menu items for workspace ${workspaceId}`,
-        error,
-      );
-      this.exceptionHandlerService.captureExceptions([error as Error]);
-    }
 
     try {
       await this.preInstalledAppsService.installOnWorkspace(workspaceId);
