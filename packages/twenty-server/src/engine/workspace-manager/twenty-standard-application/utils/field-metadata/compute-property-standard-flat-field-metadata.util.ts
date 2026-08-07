@@ -1128,7 +1128,9 @@ export const buildPropertyStandardFlatFieldMetadatas = ({
       morphId: null,
       fieldName: 'subjectOfAppraisals',
       label: i18nLabel(msg`Subject Of Appraisals`),
-      description: i18nLabel(msg`Appraisals where this is the subject property`),
+      description: i18nLabel(
+        msg`Appraisals where this is the subject property`,
+      ),
       icon: 'IconFileDollar',
       isNullable: true,
       targetObjectName: 'appraisal',

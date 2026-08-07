@@ -5,6 +5,7 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 
 export const SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME = {
   appraisal: [{ name: 'name', type: FieldMetadataType.TEXT }],
+  pipelineConfig: [{ name: 'name', type: FieldMetadataType.TEXT }],
   property: [{ name: 'name', type: FieldMetadataType.TEXT }],
   compsearch: [{ name: 'name', type: FieldMetadataType.TEXT }],
   comparable: [{ name: 'name', type: FieldMetadataType.TEXT }],

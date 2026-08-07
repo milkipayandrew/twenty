@@ -4,6 +4,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { buildAppraisalStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-appraisal-standard-flat-index-metadata.util';
+import { buildPipelineConfigStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-pipeline-config-standard-flat-index-metadata.util';
 import { buildPropertyStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-property-standard-flat-index-metadata.util';
 import { buildCompsearchStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-compsearch-standard-flat-index-metadata.util';
 import { buildComparableStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-comparable-standard-flat-index-metadata.util';
@@ -46,6 +47,7 @@ type StandardIndexBuilder<P extends AllStandardObjectName> = (
 
 const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   appraisal: buildAppraisalStandardFlatIndexMetadatas,
+  pipelineConfig: buildPipelineConfigStandardFlatIndexMetadatas,
   property: buildPropertyStandardFlatIndexMetadatas,
   compsearch: buildCompsearchStandardFlatIndexMetadatas,
   comparable: buildComparableStandardFlatIndexMetadatas,

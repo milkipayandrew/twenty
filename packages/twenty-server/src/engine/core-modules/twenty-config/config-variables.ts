@@ -111,6 +111,16 @@ export class ConfigVariables {
   WORKSPACE_SCHEMA_DDL_LOCKED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Coarse environment gate for the per-workspace pipelineConfig object. When OFF (production), the config.debug toggle is ignored so a workspace can never fake itself; when ON (local/staging smoke), the per-workspace object drives debug. Resolved debug is envGate AND config.debug.',
+    isEnvOnly: true,
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  PIPELINE_DATA_CONFIG_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the email verification token is valid',
     type: ConfigVariableType.STRING,

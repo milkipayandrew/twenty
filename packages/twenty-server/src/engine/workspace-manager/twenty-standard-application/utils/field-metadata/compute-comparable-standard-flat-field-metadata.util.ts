@@ -613,9 +613,7 @@ export const buildComparableStandardFlatFieldMetadatas = ({
       fieldName: 'pAdjPatioDeckPorch',
       type: FieldMetadataType.NUMBER,
       label: i18nLabel(msg`PAdj Patio/deck/porch`),
-      description: i18nLabel(
-        msg`Property adjustment for Patio/deck/porch ($)`,
-      ),
+      description: i18nLabel(msg`Property adjustment for Patio/deck/porch ($)`),
       icon: 'IconCurrencyDollar',
       isNullable: true,
     },
@@ -798,9 +796,7 @@ export const buildComparableStandardFlatFieldMetadatas = ({
       fieldName: 'transAdjConditions',
       type: FieldMetadataType.NUMBER,
       label: i18nLabel(msg`TransAdj Conditions`),
-      description: i18nLabel(
-        msg`Transactional conditions step adjustment ($)`,
-      ),
+      description: i18nLabel(msg`Transactional conditions step adjustment ($)`),
       icon: 'IconCurrencyDollar',
       isNullable: true,
     },
@@ -834,9 +830,7 @@ export const buildComparableStandardFlatFieldMetadatas = ({
       fieldName: 'transAdjFinancing',
       type: FieldMetadataType.NUMBER,
       label: i18nLabel(msg`TransAdj Financing`),
-      description: i18nLabel(
-        msg`Transactional financing step adjustment ($)`,
-      ),
+      description: i18nLabel(msg`Transactional financing step adjustment ($)`),
       icon: 'IconCurrencyDollar',
       isNullable: true,
     },
@@ -909,7 +903,9 @@ export const buildComparableStandardFlatFieldMetadatas = ({
       morphId: null,
       fieldName: 'property',
       label: i18nLabel(msg`Property`),
-      description: i18nLabel(msg`Source property this comparable was built from`),
+      description: i18nLabel(
+        msg`Source property this comparable was built from`,
+      ),
       icon: 'IconHome',
       isNullable: true,
       targetObjectName: 'property',

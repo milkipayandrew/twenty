@@ -25,10 +25,7 @@ export const buildReportSectionStandardFlatFieldMetadatas = ({
 }: Omit<
   CreateStandardFieldArgs<'reportSection', FieldMetadataType>,
   'context'
->): Record<
-  AllStandardObjectFieldName<'reportSection'>,
-  FlatFieldMetadata
-> => ({
+>): Record<AllStandardObjectFieldName<'reportSection'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,

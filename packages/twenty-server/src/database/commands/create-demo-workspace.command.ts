@@ -103,7 +103,8 @@ export class CreateDemoWorkspaceCommand extends CommandRunner {
     return [
       {
         subdomain:
-          process.env.DEMO_WORKSPACE_SUBDOMAIN?.trim() || DEFAULT_DEMO_SUBDOMAIN,
+          process.env.DEMO_WORKSPACE_SUBDOMAIN?.trim() ||
+          DEFAULT_DEMO_SUBDOMAIN,
         displayName:
           process.env.DEMO_WORKSPACE_DISPLAY_NAME?.trim() ||
           DEFAULT_DEMO_DISPLAY_NAME,
@@ -113,7 +114,9 @@ export class CreateDemoWorkspaceCommand extends CommandRunner {
     ];
   }
 
-  private async createDemoWorkspace(config: DemoWorkspaceConfig): Promise<void> {
+  private async createDemoWorkspace(
+    config: DemoWorkspaceConfig,
+  ): Promise<void> {
     const { subdomain, displayName, email, password } = config;
 
     // Idempotency: findOne excludes soft-deleted rows (deletedAt IS NULL), so an

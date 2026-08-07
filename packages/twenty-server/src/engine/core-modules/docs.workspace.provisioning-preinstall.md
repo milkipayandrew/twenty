@@ -1,9 +1,9 @@
 ---
 chunking: dxWSPROV
 doc-meta:
-  commit: b91c2a6457
-  main-repo-commit: 1f1d614
-  commit-note: "commit is the twenty/core HEAD (nested, gitignored git repo, branch appraisal-fork); main-repo-commit is the outer appraiser-agentic-manager HEAD. The core working tree was DIRTY when this doc was written (workspace.service.ts among the modified files) — all line refs verified against the working tree, not the bare commit. Behaviour re-verified live 2026-08-05 against a fresh-provisioned workspace (smoke AC-2 green): the 9 appraisal objects are seeded by Standard-app init and the appraisal-app auto-installs as a tarball registration."
+  commit: 1414c9d1cd
+  main-repo-commit: df27666
+  commit-note: "commit is the twenty/core HEAD (nested, gitignored git repo, branch appraisal-fork); main-repo-commit is the outer appraiser-agentic-manager HEAD. The prefill change to workspace.service.ts (WSS) that this doc describes — dropping all demo-data prefill (companies/people/opportunities/dashboards/workflows + command-menu items) so a fresh workspace starts EMPTY, keeping only the create-company logic-function seed + pre-installed-app install — was DIRTY in the working tree when this doc was first written and is now COMMITTED in nested 32e284e6b7 (feat(appraisal): fork customizations for staging deploy). Refreshed 2026-08-06 for that commit: all WSS line anchors (activateWorkspace #332, guarded init block #388-407, prefillCreatedWorkspaceRecords def #865 / EMPTY comment #871 / installOnWorkspace #885) re-verified against the committed file. Behaviour previously verified live 2026-08-05 against a fresh-provisioned workspace (smoke AC-2 green): the 9 appraisal objects are seeded by Standard-app init and the appraisal-app auto-installs as a tarball registration."
 sources:
   - file: twenty/core/packages/twenty-server/src/engine/core-modules/onboarding/enums/onboarding-status.enum.ts
     prefix: OSE

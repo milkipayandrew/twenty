@@ -6,6 +6,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { buildAppraisalStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-appraisal-standard-flat-field-metadata.util';
+import { buildPipelineConfigStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-pipeline-config-standard-flat-field-metadata.util';
 import { buildPropertyStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-property-standard-flat-field-metadata.util';
 import { buildCompsearchStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-compsearch-standard-flat-field-metadata.util';
 import { buildComparableStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-comparable-standard-flat-field-metadata.util';
@@ -50,6 +51,7 @@ type StandardFieldBuilder<P extends AllStandardObjectName> = (
 
 const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   appraisal: buildAppraisalStandardFlatFieldMetadatas,
+  pipelineConfig: buildPipelineConfigStandardFlatFieldMetadatas,
   property: buildPropertyStandardFlatFieldMetadatas,
   compsearch: buildCompsearchStandardFlatFieldMetadatas,
   comparable: buildComparableStandardFlatFieldMetadatas,

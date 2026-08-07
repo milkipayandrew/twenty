@@ -18,6 +18,7 @@ export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   workflowRun: '20202020-4e28-4e95-a9d7-6c00874f843c',
   dashboard: '20202020-3840-4b6d-9425-0c5188b05ca8',
   appraisal: 'd9ff1614-0eaa-48c6-a04b-f7c820a7cd09',
+  pipelineConfig: '96806312-6fd6-4774-8d44-00a7e17adbfd',
   property: '1f1f7ea1-6747-4486-a58e-a06b64a8c686',
   compsearch: 'd3658e97-673b-4d27-963b-601c8d4011ce',
   comparable: 'd8240c05-c5e3-4fab-9c82-49b49957be40',

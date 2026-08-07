@@ -71,6 +71,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
+import { prefillPipelineConfig } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-pipeline-config.util';
 import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
@@ -864,6 +865,7 @@ export class WorkspaceService {
 
   private async prefillCreatedWorkspaceRecords({
     workspaceId,
+    schemaName,
   }: {
     workspaceId: string;
     schemaName: string;
@@ -880,6 +882,14 @@ export class WorkspaceService {
           workspaceId,
         ),
     });
+
+    // Seed the single per-workspace pipelineConfig row (production-like
+    // defaults: debug OFF, advanceOnComplete ON) only when the coarse
+    // environment gate is ON. Prod keeps the gate OFF, so the config.debug
+    // toggle can never fake a production workspace (ADR-0001).
+    if (this.twentyConfigService.get('PIPELINE_DATA_CONFIG_ENABLED')) {
+      await prefillPipelineConfig(this.coreDataSource.manager, schemaName);
+    }
 
     try {
       await this.preInstalledAppsService.installOnWorkspace(workspaceId);

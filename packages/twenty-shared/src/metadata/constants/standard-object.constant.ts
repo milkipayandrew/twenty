@@ -118,6 +118,49 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  pipelineConfig: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.pipelineConfig,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.pipelineConfig,
+      ),
+      name: { universalIdentifier: 'ad2e2406-a59e-4fb5-9ab4-4e7e7e683ad2' },
+      debug: { universalIdentifier: 'eaec0dc1-2b98-4e48-b951-f2adb8be4d8d' },
+      advanceOnComplete: {
+        universalIdentifier: '8eeddbf1-bca7-444d-888a-516af4437e3a',
+      },
+      syncApiKeyId: {
+        universalIdentifier: '853a27b3-0207-42dd-ad81-c6546e79e5ba',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: 'e3d18445-6d62-481f-be58-be84eb6f0237',
+      },
+    },
+    views: {
+      allPipelineConfigs: {
+        universalIdentifier: '42c33c5d-78a0-4164-bc85-897d62d1ce83',
+        viewFields: {
+          name: {
+            universalIdentifier: 'e6ea303c-fccf-4fa1-a686-a82a18d353dc',
+          },
+          debug: {
+            universalIdentifier: '7023f696-2675-42be-a900-f6b72ae3987b',
+          },
+          advanceOnComplete: {
+            universalIdentifier: 'b33d651e-07ee-4b52-a82b-44ac6040f9ce',
+          },
+          createdAt: {
+            universalIdentifier: '8b8ef0cf-ecdd-4de4-9e88-71f8325edd75',
+          },
+          updatedAt: {
+            universalIdentifier: '6ea8c304-2ca6-4ddb-83e6-896569c63a8b',
+          },
+        },
+      },
+    },
+  },
   property: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.property,
     fields: {
