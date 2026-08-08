@@ -86,6 +86,16 @@ export const STANDARD_OBJECTS = {
       subjectProperty: {
         universalIdentifier: 'fdbcef5e-7848-4142-962c-40fed7fa6a17',
       },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.appraisal,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
+      },
     },
     indexes: {
       searchVectorGinIndex: {
@@ -131,6 +141,16 @@ export const STANDARD_OBJECTS = {
       },
       syncApiKeyId: {
         universalIdentifier: '853a27b3-0207-42dd-ad81-c6546e79e5ba',
+      },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.pipelineConfig,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
       },
     },
     indexes: {
@@ -292,6 +312,16 @@ export const STANDARD_OBJECTS = {
       artifacts: {
         universalIdentifier: 'a614c0e1-bb43-485f-96fe-a159157835c4',
       },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.property,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
+      },
     },
     indexes: {
       searchVectorGinIndex: {
@@ -369,6 +399,16 @@ export const STANDARD_OBJECTS = {
       },
       selected: {
         universalIdentifier: 'fe175682-95f5-453f-a8b0-974265859fa9',
+      },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.compsearch,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
       },
     },
     indexes: {
@@ -535,6 +575,16 @@ export const STANDARD_OBJECTS = {
       selectedInCompsearch: {
         universalIdentifier: '17f30981-f40a-4c0b-86cd-e00735fa1c3d',
       },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.comparable,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
+      },
     },
     indexes: {
       searchVectorGinIndex: {
@@ -586,6 +636,16 @@ export const STANDARD_OBJECTS = {
       },
       compsearches: {
         universalIdentifier: '6a8098ed-2cdb-4d16-866a-13f6b1752472',
+      },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.report,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
       },
     },
     indexes: {
@@ -643,6 +703,16 @@ export const STANDARD_OBJECTS = {
       render: { universalIdentifier: 'a47118bf-5d51-4287-b8dc-b96fbca04a3a' },
       report: { universalIdentifier: 'e97d73ba-0e64-4dc5-bb75-7210aec02995' },
       nodes: { universalIdentifier: '869c9587-df1d-4acf-a025-92c14a6c4fa6' },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportSection,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
+      },
     },
     indexes: {
       searchVectorGinIndex: {
@@ -702,6 +772,16 @@ export const STANDARD_OBJECTS = {
       rootOfReports: {
         universalIdentifier: '391b7328-f356-4232-8a51-87a3ddb06ec0',
       },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportNode,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
+      },
     },
     indexes: {
       searchVectorGinIndex: {
@@ -721,6 +801,16 @@ export const STANDARD_OBJECTS = {
       },
       parent: { universalIdentifier: 'b33f1020-c22a-456b-97df-eaac13ac1efb' },
       child: { universalIdentifier: '36983c09-69bd-48c7-b3a3-dfc0cdf000f4' },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportNodeEdge,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
+      },
     },
     indexes: {
       searchVectorGinIndex: {
@@ -3103,6 +3193,96 @@ export const STANDARD_OBJECTS = {
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageCampaign,
+        }),
+      },
+      targetAppraisal: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.appraisal,
+        }),
+      },
+      targetPipelineConfig: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.pipelineConfig,
+        }),
+      },
+      targetProperty: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.property,
+        }),
+      },
+      targetComparable: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.comparable,
+        }),
+      },
+      targetCompsearch: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.compsearch,
+        }),
+      },
+      targetReport: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.report,
+        }),
+      },
+      targetReportSection: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportSection,
+        }),
+      },
+      targetReportNode: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportNode,
+        }),
+      },
+      targetReportNodeEdge: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.reportNodeEdge,
         }),
       },
       linkedRecordCachedName: {
