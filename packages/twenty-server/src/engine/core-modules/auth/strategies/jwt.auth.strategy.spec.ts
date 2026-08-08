@@ -6,6 +6,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { PIPELINE_CONFIG_SYSTEM_API_KEY_ID } from 'src/engine/core-modules/auth/constants/pipeline-config-system-api-key.constant';
 import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
@@ -224,6 +225,34 @@ describe('JwtAuthStrategy', () => {
 
       expect(result).toBeTruthy();
       expect(result.apiKey?.id).toBe('api-key-id');
+    });
+
+    it('should authenticate the system pipeline-config principal (sentinel jti) without an apiKeyMap row', async () => {
+      const payload = {
+        ...jwt,
+        jti: PIPELINE_CONFIG_SYSTEM_API_KEY_ID,
+        type: JwtTokenTypeEnum.API_KEY,
+      };
+
+      const mockWorkspace = new WorkspaceEntity();
+
+      mockWorkspace.id = 'workspace-id';
+      workspaceStore[payload.sub] = mockWorkspace;
+      // Fresh workspace: no apiKey rows at all — the read must still authenticate.
+      apiKeyStore['workspace-id'] = {};
+
+      strategy = createStrategy();
+
+      const result = await strategy.validate(payload as JwtPayload);
+
+      expect(result.apiKey?.id).toBe(PIPELINE_CONFIG_SYSTEM_API_KEY_ID);
+      expect(result.apiKey?.workspaceId).toBe('workspace-id');
+      expect(result.apiKey?.revokedAt).toBeNull();
+      // The apiKeyMap must NOT be consulted for the system principal.
+      expect(workspaceCacheService.getOrRecompute).not.toHaveBeenCalledWith(
+        'workspace-id',
+        ['apiKeyMap'],
+      );
     });
   });
 

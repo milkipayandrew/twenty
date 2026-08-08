@@ -8,6 +8,7 @@ import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+import { PIPELINE_CONFIG_SYSTEM_API_KEY_ID } from 'src/engine/core-modules/auth/constants/pipeline-config-system-api-key.constant';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
@@ -21,6 +22,7 @@ import {
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 @Injectable()
 export class ApiKeyRoleService {
@@ -69,6 +71,12 @@ export class ApiKeyRoleService {
     apiKeyId: string,
     workspaceId: string,
   ): Promise<string> {
+    // The system pipeline-config read principal has no roleTarget row; it resolves to the
+    // workspace Admin role (same role the minted per-workspace key gets), keyed by universalIdentifier.
+    if (apiKeyId === PIPELINE_CONFIG_SYSTEM_API_KEY_ID) {
+      return this.getSystemApiKeyRoleId(workspaceId);
+    }
+
     const { apiKeyRoleMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['apiKeyRoleMap'],
@@ -86,6 +94,29 @@ export class ApiKeyRoleService {
     return roleId;
   }
 
+  // Resolves the workspace Admin role's (per-workspace) id from its stable universalIdentifier for the
+  // system pipeline-config read principal. Mirrors generate-api-key.command's Admin-role resolution.
+  private async getSystemApiKeyRoleId(workspaceId: string): Promise<string> {
+    const { flatRoleMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatRoleMaps'],
+    );
+
+    const adminRole =
+      flatRoleMaps.byUniversalIdentifier[
+        STANDARD_ROLE.admin.universalIdentifier
+      ];
+
+    if (!isDefined(adminRole)) {
+      throw new ApiKeyException(
+        `System pipeline-config Admin role not found in workspace ${workspaceId}`,
+        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
+      );
+    }
+
+    return adminRole.id;
+  }
+
   async getRoleDtoByApiKeyId({
     apiKeyId,
     workspaceId,
@@ -99,7 +130,11 @@ export class ApiKeyRoleService {
         'flatRoleMaps',
       ]);
 
-    const roleId = apiKeyRoleMap[apiKeyId];
+    // The system pipeline-config read principal resolves to the workspace Admin role (no roleTarget row).
+    const roleId =
+      apiKeyId === PIPELINE_CONFIG_SYSTEM_API_KEY_ID
+        ? await this.getSystemApiKeyRoleId(workspaceId)
+        : apiKeyRoleMap[apiKeyId];
 
     if (!isDefined(roleId)) {
       throw new ApiKeyException(

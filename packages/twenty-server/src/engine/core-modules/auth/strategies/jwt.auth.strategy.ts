@@ -5,10 +5,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { type SecretOrKeyProvider, Strategy } from 'passport-jwt';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  PIPELINE_CONFIG_SYSTEM_API_KEY_EXPIRES_AT,
+  PIPELINE_CONFIG_SYSTEM_API_KEY_ID,
+} from 'src/engine/core-modules/auth/constants/pipeline-config-system-api-key.constant';
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { type ApiKeyTokenJwtPayload } from 'src/engine/core-modules/auth/types/api-key-token-jwt-payload.type';
 import { ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
@@ -76,6 +81,19 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       ),
     );
 
+    // System pipeline-config read principal: a bearer minted from the instance-master APP_SECRET
+    // (already signature-verified for THIS workspace by resolveVerificationKey) whose jti is the
+    // well-known system sentinel. It authenticates the appraisal per-workspace config read WITHOUT
+    // a pre-existing core.apiKey row in the workspace, so a freshly-provisioned tenant is readable.
+    // Trust equals possession of APP_SECRET; the api-key role resolver maps it to the Admin role.
+    if (payload.jti === PIPELINE_CONFIG_SYSTEM_API_KEY_ID) {
+      return {
+        apiKey: this.buildSystemApiKey(workspace.id),
+        workspace,
+        workspaceMemberId: payload.workspaceMemberId,
+      };
+    }
+
     const { apiKeyMap } = await this.workspaceCacheService.getOrRecompute(
       workspace.id,
       ['apiKeyMap'],
@@ -98,6 +116,23 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     return { apiKey, workspace, workspaceMemberId: payload.workspaceMemberId };
+  }
+
+  // A synthetic, non-persisted apiKey for the system pipeline-config read principal. It carries the
+  // sentinel id (which the api-key role resolver maps to the workspace Admin role) and never expires;
+  // the presented bearer is short-lived and re-minted per read on the client side.
+  private buildSystemApiKey(workspaceId: string): FlatApiKey {
+    const nowIso = new Date().toISOString();
+
+    return {
+      id: PIPELINE_CONFIG_SYSTEM_API_KEY_ID,
+      name: 'pipeline-config-system',
+      workspaceId,
+      expiresAt: PIPELINE_CONFIG_SYSTEM_API_KEY_EXPIRES_AT,
+      revokedAt: null,
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    };
   }
 
   private async validateAccessToken(
