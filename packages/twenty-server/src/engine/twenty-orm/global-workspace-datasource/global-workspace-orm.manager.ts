@@ -2,6 +2,8 @@ import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
+import { PIPELINE_CONFIG_SYSTEM_API_KEY_ID } from 'src/engine/core-modules/auth/constants/pipeline-config-system-api-key.constant';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -15,6 +17,8 @@ import {
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
@@ -94,6 +98,7 @@ export class GlobalWorkspaceOrmManager {
       ORMEntityMetadatas: entityMetadatas,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
+      flatRoleMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -105,6 +110,7 @@ export class GlobalWorkspaceOrmManager {
       'ORMEntityMetadatas',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
+      'flatRoleMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
@@ -124,7 +130,45 @@ export class GlobalWorkspaceOrmManager {
       permissionsPerRoleId,
       entityMetadatas,
       userWorkspaceRoleMap,
-      apiKeyRoleMap,
+      apiKeyRoleMap: this.withSystemPipelineConfigApiKeyRole(
+        authContext,
+        apiKeyRoleMap,
+        flatRoleMaps,
+      ),
+    };
+  }
+
+  // The system pipeline-config read principal (sentinel jti, minted from instance APP_SECRET) has no
+  // core.apiKey/roleTarget row, so its synthetic apiKey.id is absent from the cached apiKeyRoleMap and
+  // object-REST role resolution (resolveRoleIdFromAuthContext) yields undefined -> "Invalid auth context".
+  // Mirror the metadata-path handling (ApiKeyRoleService) by mapping the sentinel to the workspace Admin
+  // role here, so both permission-config and row-level-permission resolution find a role. Non-sentinel
+  // principals are untouched; only a bearer holding the instance APP_SECRET can present this jti.
+  private withSystemPipelineConfigApiKeyRole(
+    authContext: WorkspaceAuthContext,
+    apiKeyRoleMap: Record<string, string>,
+    flatRoleMaps: WorkspaceCacheDataMap['flatRoleMaps'],
+  ): Record<string, string> {
+    if (
+      !isApiKeyAuthContext(authContext) ||
+      authContext.apiKey.id !== PIPELINE_CONFIG_SYSTEM_API_KEY_ID ||
+      apiKeyRoleMap[PIPELINE_CONFIG_SYSTEM_API_KEY_ID]
+    ) {
+      return apiKeyRoleMap;
+    }
+
+    const adminRole =
+      flatRoleMaps.byUniversalIdentifier[
+        STANDARD_ROLE.admin.universalIdentifier
+      ];
+
+    if (!adminRole) {
+      return apiKeyRoleMap;
+    }
+
+    return {
+      ...apiKeyRoleMap,
+      [PIPELINE_CONFIG_SYSTEM_API_KEY_ID]: adminRole.id,
     };
   }
 
