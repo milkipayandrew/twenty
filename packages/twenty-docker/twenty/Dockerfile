@@ -44,10 +44,20 @@ COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
 
-RUN npx nx run twenty-server:lingui:extract && \
-    npx nx run twenty-server:lingui:compile && \
-    npx nx run twenty-emails:lingui:extract && \
-    npx nx run twenty-emails:lingui:compile
+# Same 4-vCPU-droplet lingui hardening as the frontend build below: nx's default
+# parallelism CPU-starves lingui's SWC extractor worker (threads lib, 10s init default)
+# so it times out ("Did not receive an init message from worker after 10000ms"). This
+# step used to be masked by Docker layer cache (only re-runs when the fork source
+# changes); once it actually runs it hits the same wall. Serialize nx (--parallel=1),
+# run lingui single-process (--workers=1), and raise the worker-init timeout.
+RUN THREADS_WORKER_INIT_TIMEOUT=60000 NX_DAEMON=false \
+      npx nx run twenty-server:lingui:extract --parallel=1 --workers=1 && \
+    THREADS_WORKER_INIT_TIMEOUT=60000 NX_DAEMON=false \
+      npx nx run twenty-server:lingui:compile --parallel=1 --workers=1 && \
+    THREADS_WORKER_INIT_TIMEOUT=60000 NX_DAEMON=false \
+      npx nx run twenty-emails:lingui:extract --parallel=1 --workers=1 && \
+    THREADS_WORKER_INIT_TIMEOUT=60000 NX_DAEMON=false \
+      npx nx run twenty-emails:lingui:compile --parallel=1 --workers=1
 
 RUN npx nx run twenty-server:build
 
