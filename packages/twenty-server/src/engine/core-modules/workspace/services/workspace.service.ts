@@ -3,6 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
+import { addDays } from 'date-fns';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -19,6 +20,7 @@ import {
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -71,7 +73,11 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
-import { prefillPipelineConfig } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-pipeline-config.util';
+import {
+  PIPELINE_CONFIG_SEED_ID,
+  prefillPipelineConfig,
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-pipeline-config.util';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
@@ -136,6 +142,7 @@ export class WorkspaceService {
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
     private readonly applicationService: ApplicationService,
     private readonly preInstalledAppsService: PreInstalledAppsService,
+    private readonly apiKeyService: ApiKeyService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
@@ -889,6 +896,45 @@ export class WorkspaceService {
     // toggle can never fake a production workspace (ADR-0001).
     if (this.twentyConfigService.get('PIPELINE_DATA_CONFIG_ENABLED')) {
       await prefillPipelineConfig(this.coreDataSource.manager, schemaName);
+
+      // Mint a per-workspace Admin API key and store its id (jti) in the seeded
+      // pipelineConfig.syncApiKeyId. The Dagu pipeline derives a live per-workspace
+      // sync-back token from APP_SECRET + workspaceId + this jti at run time; without
+      // it every CRM write-back (flowState RUNNING/DONE + 04-sync-twenty) fails 403 on
+      // the absent/stale fallback key, so the pipeline can never write results back.
+      // Non-critical: a failure here must not block workspace creation.
+      try {
+        const adminRoles: Array<{ id: string }> =
+          await this.coreDataSource.manager.query(
+            `SELECT id FROM core.role WHERE "workspaceId" = $1 AND "universalIdentifier" = $2 LIMIT 1`,
+            [workspaceId, STANDARD_ROLE.admin.universalIdentifier],
+          );
+        const adminRoleId = adminRoles?.[0]?.id;
+
+        if (!isDefined(adminRoleId)) {
+          this.logger.error(
+            `Pipeline sync key: no Admin role for workspace ${workspaceId}; pipelineConfig.syncApiKeyId left unset`,
+          );
+        } else {
+          const apiKey = await this.apiKeyService.create({
+            name: 'Pipeline Sync Key',
+            // Non-expiring in practice (matches workspace:generate-api-key default).
+            expiresAt: addDays(new Date(), 100 * 365),
+            workspaceId,
+            roleId: adminRoleId,
+          });
+          await this.coreDataSource.manager.query(
+            `UPDATE "${schemaName}"."pipelineConfig" SET "syncApiKeyId" = $1 WHERE id = $2`,
+            [apiKey.id, PIPELINE_CONFIG_SEED_ID],
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Non-critical: failed to seed pipelineConfig.syncApiKeyId for workspace ${workspaceId}`,
+          error,
+        );
+        this.exceptionHandlerService.captureExceptions([error as Error]);
+      }
     }
 
     try {

@@ -449,6 +449,28 @@ export const buildCompsearchStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  candidates: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'candidates',
+      label: i18nLabel(msg`Candidates`),
+      description: i18nLabel(msg`Candidate comparables for this compsearch`),
+      icon: 'IconGitCompare',
+      isNullable: true,
+      targetObjectName: 'comparable',
+      targetFieldName: 'candidateInCompsearch',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

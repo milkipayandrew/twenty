@@ -77,11 +77,17 @@ export const STANDARD_OBJECTS = {
       appraisalNotes: {
         universalIdentifier: '3d9e6815-3a91-4fb8-b8d2-582592738431',
       },
+      images: {
+        universalIdentifier: '9383a6ee-42f5-4bd2-915b-0f421c3a18d2',
+      },
       compsearch: {
         universalIdentifier: '0e82d8b4-e274-46e6-9975-5a44ef7c6ffb',
       },
       report: {
         universalIdentifier: '98b60f79-a801-442c-9561-63f10cc891b2',
+      },
+      reportLink: {
+        universalIdentifier: '90c434dc-71e6-400c-91db-d9d97d488269',
       },
       subjectProperty: {
         universalIdentifier: 'fdbcef5e-7848-4142-962c-40fed7fa6a17',
@@ -123,6 +129,72 @@ export const STANDARD_OBJECTS = {
           },
           updatedAt: {
             universalIdentifier: 'dd4b2360-7aa1-4f05-9837-35f43a122013',
+          },
+          subjectAddress: {
+            universalIdentifier: '0d5d53e2-2fe8-440a-9cd3-565df36e0e0f',
+          },
+          bedrooms: {
+            universalIdentifier: 'e3ac703c-daf7-4991-a6c5-e4e0c6a5c86b',
+          },
+          bathrooms: {
+            universalIdentifier: '1f92dd47-2c00-42fc-ac4d-50e45fa2409e',
+          },
+          livingAreaGla: {
+            universalIdentifier: '40850094-cb0b-4a3e-a02a-819593927666',
+          },
+          yearBuilt: {
+            universalIdentifier: 'fbf5ede7-1536-477b-8e05-0e52ebd8596b',
+          },
+          lotSize: {
+            universalIdentifier: '37eb916b-13e4-4b22-830a-894bbbe7a70d',
+          },
+          style: {
+            universalIdentifier: 'e3b2f962-442b-49e8-81d9-30dc8a99e67a',
+          },
+          quality: {
+            universalIdentifier: 'aaf2381b-175b-43e5-97c3-46fec98749c5',
+          },
+          conditionRating: {
+            universalIdentifier: 'b682bd33-1e0e-4978-b1c8-ddb26a1ad2cc',
+          },
+          effectiveAge: {
+            universalIdentifier: 'c212e811-febf-4c6e-9807-3c88dd575c3d',
+          },
+          garage: {
+            universalIdentifier: '88021796-9918-40cd-bd7e-8ab689d0b3f0',
+          },
+          fireplace: {
+            universalIdentifier: '60673101-9661-41d5-bef3-e67d43cf983a',
+          },
+          heatingCooling: {
+            universalIdentifier: 'f97138db-88bf-480f-b035-57c0b5c76263',
+          },
+          amenitiesOutbuildings: {
+            universalIdentifier: '011d2a88-1639-4a5b-99e5-8eb53586f483',
+          },
+          subjectView: {
+            universalIdentifier: '82aa580c-6961-4dc0-a5e4-33018019271f',
+          },
+          transactionFha: {
+            universalIdentifier: '0e3b01ce-e6cc-446c-ac80-5cc3a9150433',
+          },
+          appraisalNotes: {
+            universalIdentifier: 'c5f1719b-79f4-4de8-a411-8019173503a5',
+          },
+          images: {
+            universalIdentifier: '1dc22a9a-8589-4565-a089-a22288853964',
+          },
+          compsearch: {
+            universalIdentifier: '922008f6-a43c-432b-810e-7af7fe45a623',
+          },
+          report: {
+            universalIdentifier: '824aeb26-0934-43c6-bb55-05639ea1dcb7',
+          },
+          reportLink: {
+            universalIdentifier: '6e8c2dc4-1637-4fc2-8849-2e27150ef3f6',
+          },
+          subjectProperty: {
+            universalIdentifier: 'd6d5f32b-be6c-4736-8464-d3b7a00082ba',
           },
         },
       },
@@ -400,6 +472,9 @@ export const STANDARD_OBJECTS = {
       selected: {
         universalIdentifier: 'fe175682-95f5-453f-a8b0-974265859fa9',
       },
+      candidates: {
+        universalIdentifier: '37b516fa-a7b2-4d51-b743-230f83da17b5',
+      },
       timelineActivities: {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
           applicationUniversalIdentifier:
@@ -574,6 +649,9 @@ export const STANDARD_OBJECTS = {
       },
       selectedInCompsearch: {
         universalIdentifier: '17f30981-f40a-4c0b-86cd-e00735fa1c3d',
+      },
+      candidateInCompsearch: {
+        universalIdentifier: '60a24411-ae84-496c-9140-4037f0fcd6eb',
       },
       timelineActivities: {
         universalIdentifier: getSystemRelationFieldUniversalIdentifier({
