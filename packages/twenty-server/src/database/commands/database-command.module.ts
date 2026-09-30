@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { ConvergeStandardSchemaCommand } from 'src/database/commands/converge-standard-schema/converge-standard-schema.command';
 import { CreateDemoWorkspaceCommand } from 'src/database/commands/create-demo-workspace.command';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
@@ -119,6 +120,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     UpgradeStatusCommand,
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,
+    ConvergeStandardSchemaCommand,
     provideWorkspaceScopedRepository(RoleEntity),
   ],
 })
