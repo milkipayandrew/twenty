@@ -80,6 +80,13 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       STANDARD_OBJECTS.report.views.allReports.universalIdentifier,
     position: 11,
   },
+  allMlses: {
+    universalIdentifier: 'a38cabde-face-4cc2-9cc6-3471f9ff90a2',
+    type: NavigationMenuItemType.OBJECT,
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.mls.views.allMlses.universalIdentifier,
+    position: 12,
+  },
   workflowsFolder: {
     universalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     type: NavigationMenuItemType.FOLDER,

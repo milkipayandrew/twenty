@@ -58,6 +58,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "lotSize": {
         "universalIdentifier": "88d82e7f-8488-442d-a2d9-aebd1e7ad7d5",
       },
+      "mls": {
+        "universalIdentifier": "87be30ba-6d4a-43a2-a328-38fedd9e115d",
+      },
       "name": {
         "universalIdentifier": "47de06b5-e89c-4baa-9ef5-5be195fb8dff",
       },
@@ -164,6 +167,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "lotSize": {
             "universalIdentifier": "37eb916b-13e4-4b22-830a-894bbbe7a70d",
+          },
+          "mls": {
+            "universalIdentifier": "d4960700-bf18-4588-87c7-eff74db19fd8",
           },
           "name": {
             "universalIdentifier": "6d509bf5-f3e7-451e-83a6-e4700b7cbfa2",
@@ -2215,6 +2221,86 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
   },
+  "mls": {
+    "fields": {
+      "appraisals": {
+        "universalIdentifier": "6d97a027-27f1-4cb4-a4d6-1a3e1eb7fd25",
+      },
+      "createdAt": {
+        "universalIdentifier": "472aa802-b735-5a34-bc8c-2edc56dceaf9",
+      },
+      "createdBy": {
+        "universalIdentifier": "ccee56ec-a0ab-5780-96f3-222e2e49b740",
+      },
+      "deletedAt": {
+        "universalIdentifier": "ae0ddd60-9332-53b4-809f-b03a3f4d07fc",
+      },
+      "id": {
+        "universalIdentifier": "2b0e1538-b0f1-5d07-986b-97ad73f42dbb",
+      },
+      "isDefault": {
+        "universalIdentifier": "9646d3f0-2cef-494a-96e3-018b06941738",
+      },
+      "loginUrl": {
+        "universalIdentifier": "8ef3a145-0613-4ac3-b210-8e5bd32d95b4",
+      },
+      "name": {
+        "universalIdentifier": "299ac510-8343-454e-a9b5-ce072877b295",
+      },
+      "password": {
+        "universalIdentifier": "839b9460-e307-4b93-9d08-ed7187f4e6f0",
+      },
+      "position": {
+        "universalIdentifier": "486ca17b-c0b4-5fdc-af20-d7b823a9c3b7",
+      },
+      "searchVector": {
+        "universalIdentifier": "0eb37e63-c47a-56a6-9fcf-e1dbe68d1d50",
+      },
+      "timelineActivities": {
+        "universalIdentifier": "6c419ef9-6f97-5910-952b-cc165fddd4f8",
+      },
+      "updatedAt": {
+        "universalIdentifier": "70c7684f-ad1d-5999-933f-250702985262",
+      },
+      "updatedBy": {
+        "universalIdentifier": "ea3807b2-84d6-5889-91e7-1936ed39275b",
+      },
+      "username": {
+        "universalIdentifier": "64d37046-4f92-4e64-bcc1-9057bd3e9cc9",
+      },
+    },
+    "indexes": {
+      "searchVectorGinIndex": {
+        "universalIdentifier": "e52a48d4-8d26-4da9-99ac-3637468d8f70",
+      },
+    },
+    "universalIdentifier": "ef4bcf00-e200-40e0-b59a-eec4cd2738f5",
+    "views": {
+      "allMlses": {
+        "universalIdentifier": "1a925513-226a-4624-b609-cdd2285fea0a",
+        "viewFields": {
+          "createdAt": {
+            "universalIdentifier": "67962b9e-cdce-4399-8b31-5e89e82b8909",
+          },
+          "isDefault": {
+            "universalIdentifier": "ad463485-78c2-433b-8b08-d10ebfad9464",
+          },
+          "loginUrl": {
+            "universalIdentifier": "3604bdb7-5e56-40bb-a632-e897539dd01e",
+          },
+          "name": {
+            "universalIdentifier": "f7a85d8a-b1bf-4867-8c9a-4e2d970283c4",
+          },
+          "updatedAt": {
+            "universalIdentifier": "b8d79930-ff01-4948-b5f4-33144a41afd0",
+          },
+          "username": {
+            "universalIdentifier": "bf460323-7cf5-4042-b41b-bbebbfffa899",
+          },
+        },
+      },
+    },
+  },
   "note": {
     "fields": {
       "attachments": {
@@ -3756,6 +3842,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "targetMessageList": {
         "universalIdentifier": "e4367803-1b53-537c-b380-aa7c31a2a2cf",
+      },
+      "targetMls": {
+        "universalIdentifier": "60883527-7279-5098-8077-f5de95dbfb18",
       },
       "targetNote": {
         "universalIdentifier": "c2202780-3676-511d-810f-725b0f3a4fdb",

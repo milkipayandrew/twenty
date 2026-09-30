@@ -4,6 +4,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { computeStandardAppraisalViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-appraisal-views.util';
+import { computeStandardMlsViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-mls-views.util';
 import { computeStandardPipelineConfigViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-pipeline-config-views.util';
 import { computeStandardPropertyViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-property-views.util';
 import { computeStandardCompsearchViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-compsearch-views.util';
@@ -45,6 +46,7 @@ type StandardViewBuilder<P extends AllStandardObjectName> = (
 const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   appraisal: computeStandardAppraisalViews,
   pipelineConfig: computeStandardPipelineConfigViews,
+  mls: computeStandardMlsViews,
   property: computeStandardPropertyViews,
   compsearch: computeStandardCompsearchViews,
   comparable: computeStandardComparableViews,

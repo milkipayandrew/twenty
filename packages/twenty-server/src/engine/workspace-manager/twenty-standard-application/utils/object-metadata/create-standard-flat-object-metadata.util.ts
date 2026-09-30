@@ -66,6 +66,34 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  mls: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'mls'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'mls',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.mls.universalIdentifier,
+        nameSingular: 'mls',
+        namePlural: 'mlses',
+        labelSingular: i18nLabel(msg`MLS`),
+        labelPlural: i18nLabel(msg`MLS Sources`),
+        description: i18nLabel(
+          msg`MLS / listing portal an appraisal is searched against`,
+        ),
+        icon: 'IconBuildingStore',
+        isSearchable: true,
+        labelIdentifierFieldMetadataName: 'name',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   property: ({
     now,
     workspaceId,

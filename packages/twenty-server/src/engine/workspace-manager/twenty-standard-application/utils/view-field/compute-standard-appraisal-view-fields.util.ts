@@ -344,5 +344,17 @@ export const computeStandardAppraisalViewFields = (
         size: 150,
       },
     }),
+    allAppraisalsMls: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'appraisal',
+      context: {
+        viewName: 'allAppraisals',
+        viewFieldName: 'mls',
+        fieldName: 'mls',
+        position: 28,
+        isVisible: true,
+        size: 150,
+      },
+    }),
   };
 };

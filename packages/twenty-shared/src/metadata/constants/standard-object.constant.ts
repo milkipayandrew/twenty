@@ -83,6 +83,9 @@ export const STANDARD_OBJECTS = {
       compsearch: {
         universalIdentifier: '0e82d8b4-e274-46e6-9975-5a44ef7c6ffb',
       },
+      mls: {
+        universalIdentifier: '87be30ba-6d4a-43a2-a328-38fedd9e115d',
+      },
       report: {
         universalIdentifier: '98b60f79-a801-442c-9561-63f10cc891b2',
       },
@@ -196,6 +199,9 @@ export const STANDARD_OBJECTS = {
           subjectProperty: {
             universalIdentifier: 'd6d5f32b-be6c-4736-8464-d3b7a00082ba',
           },
+          mls: {
+            universalIdentifier: 'd4960700-bf18-4588-87c7-eff74db19fd8',
+          },
         },
       },
     },
@@ -248,6 +254,69 @@ export const STANDARD_OBJECTS = {
           },
           updatedAt: {
             universalIdentifier: '6ea8c304-2ca6-4ddb-83e6-896569c63a8b',
+          },
+        },
+      },
+    },
+  },
+  mls: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.mls,
+    fields: {
+      ...buildStandardObjectSystemFields(
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.mls,
+      ),
+      name: { universalIdentifier: '299ac510-8343-454e-a9b5-ce072877b295' },
+      loginUrl: {
+        universalIdentifier: '8ef3a145-0613-4ac3-b210-8e5bd32d95b4',
+      },
+      username: {
+        universalIdentifier: '64d37046-4f92-4e64-bcc1-9057bd3e9cc9',
+      },
+      password: {
+        universalIdentifier: '839b9460-e307-4b93-9d08-ed7187f4e6f0',
+      },
+      isDefault: {
+        universalIdentifier: '9646d3f0-2cef-494a-96e3-018b06941738',
+      },
+      appraisals: {
+        universalIdentifier: '6d97a027-27f1-4cb4-a4d6-1a3e1eb7fd25',
+      },
+      timelineActivities: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.mls,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+        }),
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: 'e52a48d4-8d26-4da9-99ac-3637468d8f70',
+      },
+    },
+    views: {
+      allMlses: {
+        universalIdentifier: '1a925513-226a-4624-b609-cdd2285fea0a',
+        viewFields: {
+          name: {
+            universalIdentifier: 'f7a85d8a-b1bf-4867-8c9a-4e2d970283c4',
+          },
+          loginUrl: {
+            universalIdentifier: '3604bdb7-5e56-40bb-a632-e897539dd01e',
+          },
+          isDefault: {
+            universalIdentifier: 'ad463485-78c2-433b-8b08-d10ebfad9464',
+          },
+          username: {
+            universalIdentifier: 'bf460323-7cf5-4042-b41b-bbebbfffa899',
+          },
+          createdAt: {
+            universalIdentifier: '67962b9e-cdce-4399-8b31-5e89e82b8909',
+          },
+          updatedAt: {
+            universalIdentifier: 'b8d79930-ff01-4948-b5f4-33144a41afd0',
           },
         },
       },
@@ -3291,6 +3360,16 @@ export const STANDARD_OBJECTS = {
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
           relationTargetObjectUniversalIdentifier:
             STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.pipelineConfig,
+        }),
+      },
+      targetMls: {
+        universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
+          relationTargetObjectUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.mls,
         }),
       },
       targetProperty: {

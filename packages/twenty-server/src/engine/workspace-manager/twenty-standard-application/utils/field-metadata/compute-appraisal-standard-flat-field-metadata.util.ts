@@ -635,6 +635,32 @@ export const buildAppraisalStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  mls: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'mls',
+      label: i18nLabel(msg`MLS`),
+      description: i18nLabel(
+        msg`MLS / portal to search for this appraisal (empty = the workspace default)`,
+      ),
+      icon: 'IconBuildingStore',
+      isNullable: true,
+      targetObjectName: 'mls',
+      targetFieldName: 'appraisals',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'mlsId',
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   report: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

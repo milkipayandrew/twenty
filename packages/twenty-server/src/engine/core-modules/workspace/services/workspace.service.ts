@@ -73,6 +73,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
+import { prefillMls } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-mls.util';
 import {
   PIPELINE_CONFIG_SEED_ID,
   prefillPipelineConfig,
@@ -889,6 +890,21 @@ export class WorkspaceService {
           workspaceId,
         ),
     });
+
+    // Seed the default MLS/portal row (public Redfin, isDefault=true) so every
+    // appraisal has a listing source to search out of the box. UNGATED — this
+    // is production data, not a debug lever. Idempotent (ON CONFLICT DO NOTHING).
+    // Non-critical: a failure here must not block workspace creation — the
+    // appraisal-app falls back to the same Redfin defaults when no row exists.
+    try {
+      await prefillMls(this.coreDataSource.manager, schemaName);
+    } catch (error) {
+      this.logger.error(
+        `Non-critical: failed to seed the default mls row for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
+    }
 
     // Seed the single per-workspace pipelineConfig row (production-like
     // defaults: debug OFF, advanceOnComplete ON) only when the coarse
