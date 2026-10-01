@@ -8,6 +8,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { RedactingTypeOrmLogger } from 'src/database/typeorm/redacting-typeorm.logger';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -33,6 +34,12 @@ export class GlobalWorkspaceDataSourceService
         url: this.twentyConfigService.get('PG_DATABASE_URL'),
         type: 'postgres',
         logging: this.twentyConfigService.getLoggingConfig(),
+        // Appraisal fork, task-260930_1544: statement + error, never the
+        // bound values. Built with the same options — without them it
+        // prints nothing.
+        logger: new RedactingTypeOrmLogger(
+          this.twentyConfigService.getLoggingConfig(),
+        ),
         entities: [],
         ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
           ? {
@@ -68,6 +75,11 @@ export class GlobalWorkspaceDataSourceService
           url: this.twentyConfigService.get('PG_DATABASE_REPLICA_URL'),
           type: 'postgres',
           logging: this.twentyConfigService.getLoggingConfig(),
+          // Appraisal fork, task-260930_1544: same redacting logger as the
+          // primary datasource, same options.
+          logger: new RedactingTypeOrmLogger(
+            this.twentyConfigService.getLoggingConfig(),
+          ),
           entities: [],
           ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
             ? {

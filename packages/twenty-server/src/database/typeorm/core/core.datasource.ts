@@ -2,6 +2,9 @@ import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { config } from 'dotenv';
 import { DataSource, type DataSourceOptions, type LogLevel } from 'typeorm';
+
+import { RedactingTypeOrmLogger } from 'src/database/typeorm/redacting-typeorm.logger';
+
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
   override: true,
@@ -41,6 +44,9 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
   logging: getLoggingConfig(),
+  // Appraisal fork, task-260930_1544: statement + error, never the bound
+  // values. Built with the same options — without them it prints nothing.
+  logger: new RedactingTypeOrmLogger(getLoggingConfig()),
   schema: 'core',
   entities:
     process.env.IS_BILLING_ENABLED === 'true'

@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type EventSink } from 'src/engine/core-modules/event-logs/ingest/event-sink';
-import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
+import {
+  type ApplicationLogRow,
+  type WorkspaceEventEnvelope,
+} from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
 @Injectable()
 export class ConsoleEventSink implements EventSink {
@@ -10,20 +13,24 @@ export class ConsoleEventSink implements EventSink {
   async write(events: WorkspaceEventEnvelope[]): Promise<void> {
     for (const event of events) {
       if (event.table === 'applicationLog') {
-        const context = `${event.row.logicFunctionName}:${event.row.executionId}`;
+        const line = this.formatLine(event.row);
+
+        if (line === null) {
+          continue;
+        }
 
         switch (event.row.level) {
           case 'ERROR':
-            this.logger.error(event.row.message, undefined, context);
+            this.logger.error(line);
             break;
           case 'WARN':
-            this.logger.warn(event.row.message, context);
+            this.logger.warn(line);
             break;
           case 'DEBUG':
-            this.logger.debug(event.row.message, context);
+            this.logger.debug(line);
             break;
           default:
-            this.logger.log(event.row.message, context);
+            this.logger.log(line);
             break;
         }
       }
@@ -32,5 +39,26 @@ export class ConsoleEventSink implements EventSink {
       // (objectEvent, workspaceEvent, pageview, usageEvent) carries record
       // bodies, secrets included, and must never reach stdout / `docker logs`.
     }
+  }
+
+  // Appraisal fork, task-260930_1544: exactly one log line per event.
+  // The function name and execution id used to be passed as an extra
+  // argument; this logger already has a context, so Nest printed that
+  // argument as a second message (and, for errors, an `undefined` line plus
+  // a bare line on stderr). A structured (JSON) message is printed alone so
+  // the collector can parse it; any other message is prefixed with
+  // `<function>:<executionId>`; an empty message is skipped.
+  private formatLine(row: ApplicationLogRow): string | null {
+    const message = row.message ?? '';
+
+    if (message.trim() === '') {
+      return null;
+    }
+
+    if (message.startsWith('{') && message.endsWith('}')) {
+      return message;
+    }
+
+    return `${row.logicFunctionName}:${row.executionId} ${message}`;
   }
 }
