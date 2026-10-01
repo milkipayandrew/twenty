@@ -254,6 +254,24 @@ export const buildAppraisalStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  dagRunId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'dagRunId',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(msg`Dagu Run Id`),
+      description: i18nLabel(
+        msg`Run id of the pipeline orchestrator (99-all-stages-entry) started for this appraisal`,
+      ),
+      icon: 'IconHash',
+      isNullable: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   bedrooms: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

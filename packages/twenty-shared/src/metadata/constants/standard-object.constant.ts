@@ -26,6 +26,9 @@ export const STANDARD_OBJECTS = {
       flowState: {
         universalIdentifier: '41d412d1-b790-4ae6-9765-b12f09d31055',
       },
+      dagRunId: {
+        universalIdentifier: '06e8616b-16e8-476d-92fa-4ea106622fc5',
+      },
       subjectAddress: {
         universalIdentifier: 'b2f2ba37-83cc-4d40-9777-8a7914fc4cf5',
       },

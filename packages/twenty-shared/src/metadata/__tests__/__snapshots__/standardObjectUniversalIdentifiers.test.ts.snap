@@ -28,6 +28,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "createdBy": {
         "universalIdentifier": "8450894f-317b-5cf2-adac-76c93c722d9a",
       },
+      "dagRunId": {
+        "universalIdentifier": "06e8616b-16e8-476d-92fa-4ea106622fc5",
+      },
       "deletedAt": {
         "universalIdentifier": "86f9ea84-2be1-5916-a504-e4d3c8a92854",
       },

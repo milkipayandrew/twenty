@@ -26,9 +26,11 @@ export class ConsoleEventSink implements EventSink {
             this.logger.log(event.row.message, context);
             break;
         }
-      } else {
-        this.logger.log(JSON.stringify(event.row), event.table);
       }
+      // Appraisal fork, task-260930_1544 decision D2: no catch-all branch.
+      // Only applicationLog events are printed; every other event type
+      // (objectEvent, workspaceEvent, pageview, usageEvent) carries record
+      // bodies, secrets included, and must never reach stdout / `docker logs`.
     }
   }
 }
