@@ -40,6 +40,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "fireplace": {
         "universalIdentifier": "c510068b-f677-42ec-95e2-72130c146836",
       },
+      "flowMessage": {
+        "universalIdentifier": "b02ab43d-35dc-493e-b148-da3d2618229c",
+      },
       "flowState": {
         "universalIdentifier": "41d412d1-b790-4ae6-9765-b12f09d31055",
       },
@@ -2250,9 +2253,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "name": {
         "universalIdentifier": "299ac510-8343-454e-a9b5-ce072877b295",
       },
-      "password": {
-        "universalIdentifier": "839b9460-e307-4b93-9d08-ed7187f4e6f0",
-      },
       "position": {
         "universalIdentifier": "486ca17b-c0b4-5fdc-af20-d7b823a9c3b7",
       },
@@ -2267,9 +2267,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "updatedBy": {
         "universalIdentifier": "ea3807b2-84d6-5889-91e7-1936ed39275b",
-      },
-      "username": {
-        "universalIdentifier": "64d37046-4f92-4e64-bcc1-9057bd3e9cc9",
       },
     },
     "indexes": {
@@ -2296,9 +2293,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "updatedAt": {
             "universalIdentifier": "b8d79930-ff01-4948-b5f4-33144a41afd0",
-          },
-          "username": {
-            "universalIdentifier": "bf460323-7cf5-4042-b41b-bbebbfffa899",
           },
         },
       },

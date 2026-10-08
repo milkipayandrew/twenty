@@ -15,8 +15,9 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 
-// `mls` — one row = one MLS source / listing portal the pipeline may search (name + login URL +
-// optional credentials). Every workspace is seeded with a default public Redfin row
+// `mls` — one row = one MLS source / listing portal the pipeline may search (name + login URL
+// only — the pipeline never stores a portal login; the operator's connected browser is already
+// signed in). Every workspace is seeded with a default public Redfin row
 // (prefill-mls.util.ts); appraisers add further portals and pick one per appraisal via
 // `appraisal.mls`. The appraisal-app's subject-research trigger turns the chosen row into
 // `__inputs__/mls-portal.json` + the collect DOMAIN param for the Dagu chain.
@@ -139,42 +140,6 @@ export const buildMlsStandardFlatFieldMetadatas = ({
         msg`Portal entry / login URL the agent navigates to for this MLS`,
       ),
       icon: 'IconLink',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  username: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'username',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Username`),
-      description: i18nLabel(
-        msg`Portal username (leave blank for a public portal)`,
-      ),
-      icon: 'IconUser',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  password: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'password',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Password`),
-      description: i18nLabel(
-        msg`Portal password (leave blank for a public portal)`,
-      ),
-      icon: 'IconKey',
       isNullable: true,
     },
     standardObjectMetadataRelatedEntityIds,

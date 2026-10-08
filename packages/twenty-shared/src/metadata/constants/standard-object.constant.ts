@@ -29,6 +29,9 @@ export const STANDARD_OBJECTS = {
       dagRunId: {
         universalIdentifier: '06e8616b-16e8-476d-92fa-4ea106622fc5',
       },
+      flowMessage: {
+        universalIdentifier: 'b02ab43d-35dc-493e-b148-da3d2618229c',
+      },
       subjectAddress: {
         universalIdentifier: 'b2f2ba37-83cc-4d40-9777-8a7914fc4cf5',
       },
@@ -272,12 +275,6 @@ export const STANDARD_OBJECTS = {
       loginUrl: {
         universalIdentifier: '8ef3a145-0613-4ac3-b210-8e5bd32d95b4',
       },
-      username: {
-        universalIdentifier: '64d37046-4f92-4e64-bcc1-9057bd3e9cc9',
-      },
-      password: {
-        universalIdentifier: '839b9460-e307-4b93-9d08-ed7187f4e6f0',
-      },
       isDefault: {
         universalIdentifier: '9646d3f0-2cef-494a-96e3-018b06941738',
       },
@@ -311,9 +308,6 @@ export const STANDARD_OBJECTS = {
           },
           isDefault: {
             universalIdentifier: 'ad463485-78c2-433b-8b08-d10ebfad9464',
-          },
-          username: {
-            universalIdentifier: 'bf460323-7cf5-4042-b41b-bbebbfffa899',
           },
           createdAt: {
             universalIdentifier: '67962b9e-cdce-4399-8b31-5e89e82b8909',
