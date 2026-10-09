@@ -22,5 +22,17 @@ export const computeStandardAppraisalViews = (
         icon: 'IconList',
       },
     }),
+    appraisalRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'appraisal',
+      context: {
+        viewName: 'appraisalRecordPageFields',
+        name: 'Appraisal Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconList',
+      },
+    }),
   };
 };

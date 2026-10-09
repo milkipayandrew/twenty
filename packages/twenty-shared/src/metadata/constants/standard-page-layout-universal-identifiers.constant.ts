@@ -173,6 +173,27 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
+  appraisalRecordPage: {
+    universalIdentifier: '5782a3ec-0594-4fb4-bab7-181bd8f2b3c3',
+    tabs: {
+      home: {
+        universalIdentifier: 'f194a207-d524-48f1-af75-5707b46b480d',
+        widgets: {
+          fields: {
+            universalIdentifier: '5da8863b-2532-4ce4-9f59-4924ffa56a15',
+          },
+        },
+      },
+      timeline: {
+        universalIdentifier: '9e0bf73d-dd54-4c28-9a90-f20ce1f4c8ba',
+        widgets: {
+          timeline: {
+            universalIdentifier: 'd3ec4048-244e-4cf4-9192-2c0de1cceb81',
+          },
+        },
+      },
+    },
+  },
   opportunityRecordPage: {
     universalIdentifier: '20202020-a103-4003-8003-0aa0b1ca1003',
     tabs: {

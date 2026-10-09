@@ -210,6 +210,121 @@ export const STANDARD_OBJECTS = {
           },
         },
       },
+      appraisalRecordPageFields: {
+        universalIdentifier: '3737dfe1-5d0c-4631-8948-1b9ada0845a0',
+        viewFieldGroups: {
+          general: {
+            universalIdentifier: 'd72e9f2d-89c1-4910-8b53-b431ea74b3a9',
+          },
+          relations: {
+            universalIdentifier: 'c812ceab-ade1-41eb-beb4-6dd710cc85e5',
+          },
+          subject: {
+            universalIdentifier: '61b9c1e6-05dc-43b9-a7af-93e69795c322',
+          },
+          system: {
+            universalIdentifier: '2e603979-abeb-49bc-a71b-59dd939a02d2',
+          },
+        },
+        viewFields: {
+          status: {
+            universalIdentifier: '2930c1ec-f4f0-4e50-babd-7818be4ef60f',
+          },
+          flowState: {
+            universalIdentifier: '890cdeca-401d-4711-9a87-41ff5db22e6f',
+          },
+          mls: {
+            universalIdentifier: '0ec86e53-0375-4b81-b70e-16550bf302d9',
+          },
+          subjectAddress: {
+            universalIdentifier: 'cb282192-6bda-4923-a235-2683ee65ba85',
+          },
+          flowMessage: {
+            universalIdentifier: '07abdbdf-f8dd-4dd6-849e-c6ddfc047b84',
+          },
+          dagRunId: {
+            universalIdentifier: 'c5430fa6-e317-4118-914e-bf4dadee6049',
+          },
+          reportLink: {
+            universalIdentifier: '4f73da16-a8ad-4139-bd27-dbc41562d393',
+          },
+          subjectProperty: {
+            universalIdentifier: '89cfedab-bd97-4b2b-8e0b-34ae06c3fcf6',
+          },
+          compsearch: {
+            universalIdentifier: '6b7d0c69-474c-4e5c-babf-cd9602e39ef4',
+          },
+          report: {
+            universalIdentifier: '673b8c38-f111-4c8b-9fd6-c01ce309c958',
+          },
+          bedrooms: {
+            universalIdentifier: '73bc7e37-1fa2-4eff-b8f1-eeeade82759b',
+          },
+          bathrooms: {
+            universalIdentifier: '0fb887d7-cd24-4650-aaa8-500b1953c402',
+          },
+          livingAreaGla: {
+            universalIdentifier: '457cce60-b9db-4156-b2f9-0961db2ee877',
+          },
+          yearBuilt: {
+            universalIdentifier: '8cb06d5e-995d-40f9-a26f-043590bbfaeb',
+          },
+          lotSize: {
+            universalIdentifier: '1a327cea-7bff-4c09-9ee9-807b46ec0890',
+          },
+          style: {
+            universalIdentifier: '657df38c-aa11-4085-b980-be876ca2aed7',
+          },
+          quality: {
+            universalIdentifier: '356b97f9-7cb0-4be1-8754-784c60ba2ee6',
+          },
+          conditionRating: {
+            universalIdentifier: '206fa9ab-f6bc-40b6-a650-8b668810c924',
+          },
+          effectiveAge: {
+            universalIdentifier: '53661ca6-14ea-43ec-8357-ba41819d3342',
+          },
+          garage: {
+            universalIdentifier: 'd2dd8da2-ae70-4ac4-8c05-32cbdbf1f474',
+          },
+          fireplace: {
+            universalIdentifier: 'c10a36d5-bde9-401e-b58d-5e677a1d1c59',
+          },
+          heatingCooling: {
+            universalIdentifier: '131ccd5e-9291-43f9-819a-23be4b732141',
+          },
+          amenitiesOutbuildings: {
+            universalIdentifier: '0e78676b-4ee9-401c-8ba1-55e09ee9685b',
+          },
+          subjectView: {
+            universalIdentifier: '922527a2-90b0-4ac4-b589-f740cf7136c1',
+          },
+          transactionFha: {
+            universalIdentifier: '9863c631-6a17-48f6-8998-fec401f667ec',
+          },
+          appraisalNotes: {
+            universalIdentifier: 'b5241817-57a7-4fa2-98e7-42f23ee87548',
+          },
+          images: {
+            universalIdentifier: '65e0ad68-4ab0-4b5f-98d6-54f04be4cf3e',
+          },
+          createdAt: {
+            universalIdentifier: '5b27a121-48fe-4d35-8ca7-364b462d8eb5',
+          },
+          createdBy: {
+            universalIdentifier: 'c383e37d-dc90-4477-a050-d631a1764722',
+          },
+          updatedAt: {
+            universalIdentifier: '76769955-9905-4c21-acc1-1afbf35e4fb2',
+          },
+          updatedBy: {
+            universalIdentifier: 'f1c37304-fda0-4f9f-84b5-c48c96ac332e',
+          },
+          timelineActivities: {
+            universalIdentifier: 'd3b977ad-307f-4f31-a2ef-7d246d73cefe',
+          },
+        },
+      },
     },
   },
   pipelineConfig: {
