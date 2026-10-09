@@ -18,6 +18,7 @@ const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
   'allCompsearches',
   'allComparables',
   'allReports',
+  'allMlses',
   'allCompanies',
   'allDashboards',
   'allNotes',
