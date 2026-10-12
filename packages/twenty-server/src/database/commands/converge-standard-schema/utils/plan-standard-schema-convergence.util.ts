@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
+import { CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/converge-standard-schema/constants/converge-retired-standard-universal-identifiers.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
@@ -15,10 +16,12 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 
 // Kinds the convergence creates when they are missing (by universalIdentifier)
 // from an existing workspace. Existing entities are never updated or deleted,
-// except for the append-only select option rule below.
+// except for the append-only select option rule and the explicit retired list
+// (CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS) below.
 export const CONVERGE_CREATABLE_METADATA_NAMES = [
   'objectMetadata',
   'fieldMetadata',
@@ -74,10 +77,40 @@ export type StandardSchemaConflictEntry = {
   existingUniversalIdentifier: string;
 };
 
+// An existing object or field whose structural definition differs from the
+// blueprint. The convergence never updates it, so it is reported instead.
+export type StandardSchemaDriftEntry = {
+  kind: 'objectMetadata' | 'fieldMetadata';
+  universalIdentifier: string;
+  objectName: string;
+  name: string;
+  properties: string[];
+};
+
+// An object or field owned by the standard application that the blueprint no
+// longer declares. Report-only: the convergence deletes it only when its id is
+// on the retired list (see `toDelete`).
+export type StandardSchemaExtraEntry = {
+  kind: 'objectMetadata' | 'fieldMetadata';
+  universalIdentifier: string;
+  objectName: string;
+  name: string;
+};
+
 export type StandardSchemaConvergencePlan = {
   toCreate: {
     [P in ConvergeCreatableMetadataName]: MetadataFlatEntity<P>[];
   };
+  // Retired standard entities still present in the workspace: listed in
+  // CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS, owned by the standard
+  // application and absent from the current blueprint. Nothing else is ever
+  // deleted.
+  toDelete: {
+    fieldMetadata: FlatFieldMetadata[];
+    viewField: FlatViewField[];
+  };
+  drift: StandardSchemaDriftEntry[];
+  extra: StandardSchemaExtraEntry[];
   // Existing standard SELECT / MULTI_SELECT fields with blueprint option values
   // appended (existing options, ids, labels, colors and order are preserved).
   fieldMetadataToUpdate: FlatFieldMetadata[];
@@ -220,18 +253,273 @@ const computeSelectOptionAppends = ({
   return { fieldMetadataToUpdate, optionAdds };
 };
 
-// Pure, create-only diff of the current standard blueprint (`standard`, the
-// "to" side) against a workspace's existing metadata (`existing`, the "from"
-// side). It never plans an update of an existing entity apart from appending
-// missing select option values, and never a delete.
+// What makes an object or field "the same" for the code that reads and writes
+// records. Labels, icons, descriptions and isActive are user-editable and are
+// deliberately not compared.
+const OBJECT_STRUCTURAL_PROPERTIES = [
+  'nameSingular',
+  'namePlural',
+  'isSystem',
+  'isRemote',
+] as const;
+
+const FIELD_STRUCTURAL_PROPERTIES = [
+  'name',
+  'type',
+  'isNullable',
+  'isUnique',
+  'defaultValue',
+  'universalSettings',
+  'objectMetadataUniversalIdentifier',
+  'relationTargetObjectMetadataUniversalIdentifier',
+  'relationTargetFieldMetadataUniversalIdentifier',
+] as const;
+
+// A same-named field with another universalIdentifier stands in for the
+// blueprint field: its identity and relation partner differ by construction.
+const SHADOWING_FIELD_STRUCTURAL_PROPERTIES = [
+  'type',
+  'isNullable',
+  'isUnique',
+  'universalSettings',
+  'relationTargetObjectMetadataUniversalIdentifier',
+] as const;
+
+// Key-order independent, and null / undefined / {} / missing key all compare
+// equal, so a stored JSON column matches the blueprint literal.
+const toComparable = (value: unknown): unknown => {
+  if (!isDefined(value)) {
+    return null;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(toComparable);
+  }
+
+  if (typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .map(([key, entryValue]) => [key, toComparable(entryValue)] as const)
+      .filter(([, entryValue]) => entryValue !== null)
+      .sort(([left], [right]) => left.localeCompare(right));
+
+    return entries.length === 0 ? null : Object.fromEntries(entries);
+  }
+
+  return value;
+};
+
+const getDifferingProperties = (
+  standardEntity: AnyFlatEntity,
+  existingEntity: AnyFlatEntity,
+  properties: readonly string[],
+): string[] =>
+  properties.filter(
+    (property) =>
+      JSON.stringify(toComparable(standardEntity[property])) !==
+      JSON.stringify(toComparable(existingEntity[property])),
+  );
+
+const computeStructuralDrift = ({
+  standardAllFlatEntityMaps,
+  existingAllFlatEntityMaps,
+  shadowed,
+  getObjectName,
+}: {
+  standardAllFlatEntityMaps: ConvergeFlatEntityMaps;
+  existingAllFlatEntityMaps: ConvergeFlatEntityMaps;
+  shadowed: StandardSchemaShadowedEntry[];
+  getObjectName: (objectUniversalIdentifier: string) => string;
+}): StandardSchemaDriftEntry[] => {
+  const drift: StandardSchemaDriftEntry[] = [];
+  const standardObjects = getByUniversalIdentifier(
+    standardAllFlatEntityMaps,
+    'objectMetadata',
+  );
+  const existingObjects = getByUniversalIdentifier(
+    existingAllFlatEntityMaps,
+    'objectMetadata',
+  );
+  const standardFields = getByUniversalIdentifier(
+    standardAllFlatEntityMaps,
+    'fieldMetadata',
+  );
+  const existingFields = getByUniversalIdentifier(
+    existingAllFlatEntityMaps,
+    'fieldMetadata',
+  );
+
+  for (const standardObject of Object.values(standardObjects)) {
+    const existingObject = isDefined(standardObject)
+      ? existingObjects[standardObject.universalIdentifier]
+      : undefined;
+
+    if (!isDefined(standardObject) || !isDefined(existingObject)) {
+      continue;
+    }
+
+    const properties = getDifferingProperties(
+      standardObject,
+      existingObject,
+      OBJECT_STRUCTURAL_PROPERTIES,
+    );
+
+    if (properties.length > 0) {
+      drift.push({
+        kind: 'objectMetadata',
+        universalIdentifier: standardObject.universalIdentifier,
+        objectName: String(standardObject.nameSingular),
+        name: String(standardObject.nameSingular),
+        properties,
+      });
+    }
+  }
+
+  const shadowingFieldUniversalIdentifiers = new Map(
+    shadowed
+      .filter(({ kind }) => kind === 'fieldMetadata')
+      .map(({ universalIdentifier, existingUniversalIdentifier }) => [
+        universalIdentifier,
+        existingUniversalIdentifier,
+      ]),
+  );
+
+  for (const standardField of Object.values(standardFields)) {
+    if (!isDefined(standardField)) {
+      continue;
+    }
+
+    const shadowingFieldUniversalIdentifier =
+      shadowingFieldUniversalIdentifiers.get(standardField.universalIdentifier);
+    const existingField =
+      existingFields[
+        shadowingFieldUniversalIdentifier ?? standardField.universalIdentifier
+      ];
+
+    if (!isDefined(existingField)) {
+      continue;
+    }
+
+    const properties = getDifferingProperties(
+      standardField,
+      existingField,
+      isDefined(shadowingFieldUniversalIdentifier)
+        ? SHADOWING_FIELD_STRUCTURAL_PROPERTIES
+        : FIELD_STRUCTURAL_PROPERTIES,
+    );
+
+    if (properties.length > 0) {
+      drift.push({
+        kind: 'fieldMetadata',
+        universalIdentifier: standardField.universalIdentifier,
+        objectName: getObjectName(
+          standardField.objectMetadataUniversalIdentifier as string,
+        ),
+        name: String(standardField.name),
+        properties,
+      });
+    }
+  }
+
+  return drift;
+};
+
+const computeStandardExtras = ({
+  standardAllFlatEntityMaps,
+  existingAllFlatEntityMaps,
+  getObjectName,
+}: {
+  standardAllFlatEntityMaps: ConvergeFlatEntityMaps;
+  existingAllFlatEntityMaps: ConvergeFlatEntityMaps;
+  getObjectName: (objectUniversalIdentifier: string) => string;
+}): StandardSchemaExtraEntry[] =>
+  (['objectMetadata', 'fieldMetadata'] as const).flatMap((kind) => {
+    const standard = getByUniversalIdentifier(standardAllFlatEntityMaps, kind);
+
+    return Object.values(
+      getByUniversalIdentifier(existingAllFlatEntityMaps, kind),
+    )
+      .filter(isDefined)
+      .filter(
+        (existingEntity) =>
+          existingEntity.applicationUniversalIdentifier ===
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER &&
+          !isDefined(standard[existingEntity.universalIdentifier]),
+      )
+      .map((existingEntity) => ({
+        kind,
+        universalIdentifier: existingEntity.universalIdentifier,
+        objectName:
+          kind === 'objectMetadata'
+            ? String(existingEntity.nameSingular)
+            : getObjectName(
+                existingEntity.objectMetadataUniversalIdentifier as string,
+              ),
+        name: String(
+          kind === 'objectMetadata'
+            ? existingEntity.nameSingular
+            : existingEntity.name,
+        ),
+      }));
+  });
+
+export type ConvergeRetiredUniversalIdentifiers = {
+  fieldMetadata: readonly string[];
+  viewField: readonly string[];
+};
+
+const computeRetiredToDelete = ({
+  standardAllFlatEntityMaps,
+  existingAllFlatEntityMaps,
+  retiredUniversalIdentifiers,
+}: {
+  standardAllFlatEntityMaps: ConvergeFlatEntityMaps;
+  existingAllFlatEntityMaps: ConvergeFlatEntityMaps;
+  retiredUniversalIdentifiers: ConvergeRetiredUniversalIdentifiers;
+}): StandardSchemaConvergencePlan['toDelete'] => {
+  const findRetired = (kind: 'fieldMetadata' | 'viewField') => {
+    const existing = getByUniversalIdentifier(existingAllFlatEntityMaps, kind);
+    const standard = getByUniversalIdentifier(standardAllFlatEntityMaps, kind);
+
+    return retiredUniversalIdentifiers[kind].flatMap((universalIdentifier) => {
+      const existingEntity = existing[universalIdentifier];
+
+      // Listed + present + owned by the standard application, and not brought
+      // back by the blueprint. Anything else is left alone.
+      if (
+        !isDefined(existingEntity) ||
+        existingEntity.applicationUniversalIdentifier !==
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER ||
+        isDefined(standard[universalIdentifier])
+      ) {
+        return [];
+      }
+
+      return [existingEntity];
+    });
+  };
+
+  return {
+    fieldMetadata: findRetired(
+      'fieldMetadata',
+    ) as unknown as FlatFieldMetadata[],
+    viewField: findRetired('viewField') as unknown as FlatViewField[],
+  };
+};
+
+// Pure diff of the current standard blueprint (`standard`, the "to" side)
+// against a workspace's existing metadata (`existing`, the "from" side). It is
+// create-only apart from appending missing select option values and deleting
+// the explicitly retired standard entities (allowlist, never inferred).
 export const planStandardSchemaConvergence = ({
   standardAllFlatEntityMaps,
   existingAllFlatEntityMaps,
   now,
+  retiredUniversalIdentifiers = CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS,
 }: {
   standardAllFlatEntityMaps: ConvergeFlatEntityMaps;
   existingAllFlatEntityMaps: ConvergeFlatEntityMaps;
   now: string;
+  retiredUniversalIdentifiers?: ConvergeRetiredUniversalIdentifiers;
 }): StandardSchemaConvergencePlan => {
   const plannedByMetadataName = new Map<
     ConvergeCreatableMetadataName,
@@ -512,35 +800,43 @@ export const planStandardSchemaConvergence = ({
     }
   }
 
-  // Navigation menu items are user-arranged: only add the ones that point at
-  // an object (directly or through a view) created in this run.
-  const createdObjectUniversalIdentifiers = new Set(plannedObjects.keys());
-  const plannedViews = plannedByMetadataName.get('view')!;
+  // Navigation menu items converge like every other kind: a missing standard
+  // item is created as soon as its target (object, view, folder) exists or is
+  // planned, which the dependency closure above guarantees. This is what puts
+  // a sidebar entry added to the blueprint in hindsight on older workspaces.
+  // Removing a standard item deletes its row, so a removal is indistinguishable
+  // from "never created" and the item comes back on the next convergence.
+  // An object the workspace deactivated gets no entry.
   const plannedNavigationMenuItems =
     plannedByMetadataName.get('navigationMenuItem')!;
 
   for (const [universalIdentifier, navigationMenuItem] of [
     ...plannedNavigationMenuItems,
   ]) {
-    const viewUniversalIdentifier =
-      navigationMenuItem.viewUniversalIdentifier as string | null | undefined;
     const targetObjectUniversalIdentifier =
-      (navigationMenuItem.targetObjectMetadataUniversalIdentifier as
-        | string
-        | null
-        | undefined) ??
-      (isDefined(viewUniversalIdentifier)
-        ? (plannedViews.get(viewUniversalIdentifier)
-            ?.objectMetadataUniversalIdentifier as string | undefined)
-        : undefined);
+      navigationMenuItem.targetObjectMetadataUniversalIdentifier;
 
     if (
-      !isDefined(targetObjectUniversalIdentifier) ||
-      !createdObjectUniversalIdentifiers.has(targetObjectUniversalIdentifier)
+      typeof targetObjectUniversalIdentifier === 'string' &&
+      existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        targetObjectUniversalIdentifier
+      ]?.isActive === false
     ) {
       plannedNavigationMenuItems.delete(universalIdentifier);
     }
   }
+
+  const drift = computeStructuralDrift({
+    standardAllFlatEntityMaps,
+    existingAllFlatEntityMaps,
+    shadowed,
+    getObjectName,
+  });
+  const extra = computeStandardExtras({
+    standardAllFlatEntityMaps,
+    existingAllFlatEntityMaps,
+    getObjectName,
+  });
 
   const skippedKinds = Object.fromEntries(
     CONVERGE_NEVER_CREATED_METADATA_NAMES.map((metadataName) => {
@@ -578,8 +874,17 @@ export const planStandardSchemaConvergence = ({
     ]),
   ) as unknown as StandardSchemaConvergencePlan['toCreate'];
 
+  const toDelete = computeRetiredToDelete({
+    standardAllFlatEntityMaps,
+    existingAllFlatEntityMaps,
+    retiredUniversalIdentifiers,
+  });
+
   return {
     toCreate,
+    toDelete,
+    drift,
+    extra,
     fieldMetadataToUpdate,
     optionAdds,
     shadowed,
@@ -594,6 +899,15 @@ export const countStandardSchemaConvergenceCreates = (
 ): Partial<Record<ConvergeCreatableMetadataName, number>> =>
   Object.fromEntries(
     Object.entries(toCreate)
+      .filter(([, entities]) => entities.length > 0)
+      .map(([metadataName, entities]) => [metadataName, entities.length]),
+  );
+
+export const countStandardSchemaConvergenceDeletes = (
+  toDelete: StandardSchemaConvergencePlan['toDelete'],
+): Partial<Record<keyof StandardSchemaConvergencePlan['toDelete'], number>> =>
+  Object.fromEntries(
+    Object.entries(toDelete)
       .filter(([, entities]) => entities.length > 0)
       .map(([metadataName, entities]) => [metadataName, entities.length]),
   );

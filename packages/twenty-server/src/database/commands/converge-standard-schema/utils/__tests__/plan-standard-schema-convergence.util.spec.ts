@@ -1,7 +1,12 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { type FieldMetadataComplexOption } from 'twenty-shared/types';
+import {
+  type FieldMetadataComplexOption,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/converge-standard-schema/constants/converge-retired-standard-universal-identifiers.constant';
 import {
   CONVERGE_CREATABLE_METADATA_NAMES,
   CONVERGE_NEVER_CREATED_METADATA_NAMES,
@@ -165,6 +170,9 @@ describe('planStandardSchemaConvergence', () => {
     }
     expect(plan.fieldMetadataToUpdate).toEqual([]);
     expect(plan.optionAdds).toBe(0);
+    expect(plan.toDelete).toEqual({ fieldMetadata: [], viewField: [] });
+    expect(plan.drift).toEqual([]);
+    expect(plan.extra).toEqual([]);
     expect(plan.shadowed).toEqual([]);
     expect(plan.conflicts).toEqual([]);
     expect(plan.skippedDependents).toEqual({});
@@ -633,22 +641,55 @@ describe('planStandardSchemaConvergence', () => {
     }
   });
 
-  it('only adds navigation menu items for objects created in this run', () => {
+  it('backfills a missing standard navigation menu item whose target object exists', () => {
     const existing = cloneAsExistingWorkspace(blueprint);
     const navigationMenuItems = getEntities(existing, 'navigationMenuItem');
-    const appraisalNavigationMenuItem = Object.values(navigationMenuItems)
+    const mlsNavigationMenuItem = Object.values(navigationMenuItems)
       .filter(isDefined)
       .find(
         (navigationMenuItem) =>
           navigationMenuItem.targetObjectMetadataUniversalIdentifier ===
-          STANDARD_OBJECTS.appraisal.universalIdentifier,
+          STANDARD_OBJECTS.mls.universalIdentifier,
       );
 
-    expect(appraisalNavigationMenuItem).toBeDefined();
-    // The user removed the appraisal nav item: it must stay removed.
-    delete navigationMenuItems[
-      appraisalNavigationMenuItem!.universalIdentifier
-    ];
+    expect(mlsNavigationMenuItem).toBeDefined();
+    // A workspace created before "MLS Sources" joined the standard sidebar.
+    delete navigationMenuItems[mlsNavigationMenuItem!.universalIdentifier];
+
+    const plan = planStandardSchemaConvergence({
+      standardAllFlatEntityMaps: blueprint,
+      existingAllFlatEntityMaps: existing,
+      now: NOW,
+    });
+
+    expect(toCreateUniversalIdentifiers(plan, 'navigationMenuItem')).toEqual(
+      new Set([mlsNavigationMenuItem!.universalIdentifier]),
+    );
+    expect(plan.toCreate.objectMetadata).toEqual([]);
+    for (const metadataName of CONVERGE_CREATABLE_METADATA_NAMES) {
+      if (metadataName !== 'navigationMenuItem') {
+        expect(plan.toCreate[metadataName]).toEqual([]);
+      }
+    }
+  });
+
+  it('does not create a navigation menu item for a deactivated object', () => {
+    const existing = cloneAsExistingWorkspace(blueprint);
+    const navigationMenuItems = getEntities(existing, 'navigationMenuItem');
+    const mlsNavigationMenuItem = Object.values(navigationMenuItems)
+      .filter(isDefined)
+      .find(
+        (navigationMenuItem) =>
+          navigationMenuItem.targetObjectMetadataUniversalIdentifier ===
+          STANDARD_OBJECTS.mls.universalIdentifier,
+      );
+
+    delete navigationMenuItems[mlsNavigationMenuItem!.universalIdentifier];
+    (
+      existing.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.mls.universalIdentifier
+      ] as FlatObjectMetadata
+    ).isActive = false;
 
     const plan = planStandardSchemaConvergence({
       standardAllFlatEntityMaps: blueprint,
@@ -657,5 +698,299 @@ describe('planStandardSchemaConvergence', () => {
     });
 
     expect(plan.toCreate.navigationMenuItem).toEqual([]);
+  });
+
+  it('plans nothing on a second run once the navigation menu item exists', () => {
+    const existing = cloneAsExistingWorkspace(blueprint);
+    const navigationMenuItems = getEntities(existing, 'navigationMenuItem');
+    const mlsNavigationMenuItem = Object.values(navigationMenuItems)
+      .filter(isDefined)
+      .find(
+        (navigationMenuItem) =>
+          navigationMenuItem.targetObjectMetadataUniversalIdentifier ===
+          STANDARD_OBJECTS.mls.universalIdentifier,
+      )!;
+
+    delete navigationMenuItems[mlsNavigationMenuItem.universalIdentifier];
+
+    const firstPlan = planStandardSchemaConvergence({
+      standardAllFlatEntityMaps: blueprint,
+      existingAllFlatEntityMaps: existing,
+      now: NOW,
+    });
+
+    // Apply: the planned item now exists in the workspace.
+    for (const navigationMenuItem of firstPlan.toCreate.navigationMenuItem) {
+      navigationMenuItems[navigationMenuItem.universalIdentifier] =
+        structuredClone(navigationMenuItem) as unknown as LooseEntity;
+    }
+
+    const secondPlan = planStandardSchemaConvergence({
+      standardAllFlatEntityMaps: blueprint,
+      existingAllFlatEntityMaps: existing,
+      now: NOW,
+    });
+
+    expect(firstPlan.toCreate.navigationMenuItem).toHaveLength(1);
+    expect(secondPlan.toCreate.navigationMenuItem).toEqual([]);
+  });
+
+  it('reports structural drift of an existing standard field without updating it', () => {
+    const existing = cloneAsExistingWorkspace(blueprint);
+    const loginUrlField = existing.flatFieldMetadataMaps.byUniversalIdentifier[
+      STANDARD_OBJECTS.mls.fields.loginUrl.universalIdentifier
+    ] as FlatFieldMetadata;
+
+    loginUrlField.isNullable = !loginUrlField.isNullable;
+    // User-editable properties are not drift.
+    loginUrlField.label = 'Portal address (user label)';
+
+    const plan = planStandardSchemaConvergence({
+      standardAllFlatEntityMaps: blueprint,
+      existingAllFlatEntityMaps: existing,
+      now: NOW,
+    });
+
+    expect(plan.drift).toEqual([
+      {
+        kind: 'fieldMetadata',
+        universalIdentifier:
+          STANDARD_OBJECTS.mls.fields.loginUrl.universalIdentifier,
+        objectName: 'mls',
+        name: 'loginUrl',
+        properties: ['isNullable'],
+      },
+    ]);
+    expect(plan.fieldMetadataToUpdate).toEqual([]);
+    expect(plan.toDelete).toEqual({ fieldMetadata: [], viewField: [] });
+  });
+
+  describe('retired standard entities', () => {
+    const [
+      retiredUsernameUniversalIdentifier,
+      retiredPasswordUniversalIdentifier,
+    ] = CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS.fieldMetadata;
+    const [retiredUsernameViewFieldUniversalIdentifier] =
+      CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS.viewField;
+
+    // A workspace activated before mls lost username/password (8d8aed3711).
+    const addRetiredMlsCredentials = (existing: ConvergeFlatEntityMaps) => {
+      for (const [universalIdentifier, name] of [
+        [retiredUsernameUniversalIdentifier, 'username'],
+        [retiredPasswordUniversalIdentifier, 'password'],
+      ]) {
+        existing.flatFieldMetadataMaps.byUniversalIdentifier[
+          universalIdentifier
+        ] = {
+          universalIdentifier,
+          name,
+          type: FieldMetadataType.TEXT,
+          objectMetadataUniversalIdentifier:
+            STANDARD_OBJECTS.mls.universalIdentifier,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        } as unknown as FlatFieldMetadata;
+      }
+      existing.flatViewFieldMaps.byUniversalIdentifier[
+        retiredUsernameViewFieldUniversalIdentifier
+      ] = {
+        universalIdentifier: retiredUsernameViewFieldUniversalIdentifier,
+        viewUniversalIdentifier:
+          STANDARD_OBJECTS.mls.views.allMlses.universalIdentifier,
+        fieldMetadataUniversalIdentifier: retiredUsernameUniversalIdentifier,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      } as unknown as FlatViewField;
+    };
+
+    const toDeleteUniversalIdentifiers = (
+      plan: ReturnType<typeof planStandardSchemaConvergence>,
+    ) => ({
+      fieldMetadata: new Set(
+        plan.toDelete.fieldMetadata.map(
+          ({ universalIdentifier }) => universalIdentifier,
+        ),
+      ),
+      viewField: new Set(
+        plan.toDelete.viewField.map(
+          ({ universalIdentifier }) => universalIdentifier,
+        ),
+      ),
+    });
+
+    it('lists exactly mls.username, mls.password and the allMlses username column', () => {
+      expect(CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS).toEqual({
+        fieldMetadata: [
+          '64d37046-4f92-4e64-bcc1-9057bd3e9cc9',
+          '839b9460-e307-4b93-9d08-ed7187f4e6f0',
+        ],
+        viewField: ['bf460323-7cf5-4042-b41b-bbebbfffa899'],
+      });
+      // None of them is part of the current blueprint.
+      for (const universalIdentifier of CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS.fieldMetadata) {
+        expect(
+          blueprint.flatFieldMetadataMaps.byUniversalIdentifier[
+            universalIdentifier
+          ],
+        ).toBeUndefined();
+      }
+      expect(
+        blueprint.flatViewFieldMaps.byUniversalIdentifier[
+          retiredUsernameViewFieldUniversalIdentifier
+        ],
+      ).toBeUndefined();
+    });
+
+    it('plans the delete of listed retired entities owned by the standard application', () => {
+      const existing = cloneAsExistingWorkspace(blueprint);
+
+      addRetiredMlsCredentials(existing);
+
+      const plan = planStandardSchemaConvergence({
+        standardAllFlatEntityMaps: blueprint,
+        existingAllFlatEntityMaps: existing,
+        now: NOW,
+      });
+
+      expect(toDeleteUniversalIdentifiers(plan)).toEqual({
+        fieldMetadata: new Set([
+          retiredUsernameUniversalIdentifier,
+          retiredPasswordUniversalIdentifier,
+        ]),
+        viewField: new Set([retiredUsernameViewFieldUniversalIdentifier]),
+      });
+      expect(plan.extra).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ objectName: 'mls', name: 'username' }),
+          expect.objectContaining({ objectName: 'mls', name: 'password' }),
+        ]),
+      );
+      for (const metadataName of CONVERGE_CREATABLE_METADATA_NAMES) {
+        expect(plan.toCreate[metadataName]).toEqual([]);
+      }
+    });
+
+    it('never deletes a listed id owned by another application', () => {
+      const existing = cloneAsExistingWorkspace(blueprint);
+
+      addRetiredMlsCredentials(existing);
+      for (const universalIdentifier of [
+        retiredUsernameUniversalIdentifier,
+        retiredPasswordUniversalIdentifier,
+      ]) {
+        existing.flatFieldMetadataMaps.byUniversalIdentifier[
+          universalIdentifier
+        ]!.applicationUniversalIdentifier =
+          CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER;
+      }
+      existing.flatViewFieldMaps.byUniversalIdentifier[
+        retiredUsernameViewFieldUniversalIdentifier
+      ]!.applicationUniversalIdentifier =
+        CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER;
+
+      const plan = planStandardSchemaConvergence({
+        standardAllFlatEntityMaps: blueprint,
+        existingAllFlatEntityMaps: existing,
+        now: NOW,
+      });
+
+      expect(plan.toDelete).toEqual({ fieldMetadata: [], viewField: [] });
+    });
+
+    it('reports a non-listed standard extra without deleting it', () => {
+      const existing = cloneAsExistingWorkspace(blueprint);
+      const unlistedExtraUniversalIdentifier =
+        '20202020-6666-4666-8666-666666666666';
+
+      existing.flatFieldMetadataMaps.byUniversalIdentifier[
+        unlistedExtraUniversalIdentifier
+      ] = {
+        universalIdentifier: unlistedExtraUniversalIdentifier,
+        name: 'legacyNotes',
+        type: FieldMetadataType.TEXT,
+        objectMetadataUniversalIdentifier:
+          STANDARD_OBJECTS.mls.universalIdentifier,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      } as unknown as FlatFieldMetadata;
+
+      const plan = planStandardSchemaConvergence({
+        standardAllFlatEntityMaps: blueprint,
+        existingAllFlatEntityMaps: existing,
+        now: NOW,
+      });
+
+      expect(plan.extra).toEqual([
+        {
+          kind: 'fieldMetadata',
+          universalIdentifier: unlistedExtraUniversalIdentifier,
+          objectName: 'mls',
+          name: 'legacyNotes',
+        },
+      ]);
+      expect(plan.toDelete).toEqual({ fieldMetadata: [], viewField: [] });
+    });
+
+    it('leaves a custom field with the same name untouched', () => {
+      const existing = cloneAsExistingWorkspace(blueprint);
+      const customUsernameUniversalIdentifier =
+        '20202020-7777-4777-8777-777777777777';
+
+      addCustomField({
+        existing,
+        objectUniversalIdentifier: STANDARD_OBJECTS.mls.universalIdentifier,
+        name: 'username',
+        universalIdentifier: customUsernameUniversalIdentifier,
+      });
+
+      const plan = planStandardSchemaConvergence({
+        standardAllFlatEntityMaps: blueprint,
+        existingAllFlatEntityMaps: existing,
+        now: NOW,
+      });
+
+      expect(plan.toDelete).toEqual({ fieldMetadata: [], viewField: [] });
+      expect(plan.extra).toEqual([]);
+      expect(
+        existing.flatFieldMetadataMaps.byUniversalIdentifier[
+          customUsernameUniversalIdentifier
+        ],
+      ).toBeDefined();
+    });
+
+    it('is idempotent: nothing is planned once the retired entities are gone', () => {
+      const existing = cloneAsExistingWorkspace(blueprint);
+
+      addRetiredMlsCredentials(existing);
+
+      const firstPlan = planStandardSchemaConvergence({
+        standardAllFlatEntityMaps: blueprint,
+        existingAllFlatEntityMaps: existing,
+        now: NOW,
+      });
+
+      // Apply the deletes.
+      for (const field of firstPlan.toDelete.fieldMetadata) {
+        delete existing.flatFieldMetadataMaps.byUniversalIdentifier[
+          field.universalIdentifier
+        ];
+      }
+      for (const viewField of firstPlan.toDelete.viewField) {
+        delete existing.flatViewFieldMaps.byUniversalIdentifier[
+          viewField.universalIdentifier
+        ];
+      }
+
+      const secondPlan = planStandardSchemaConvergence({
+        standardAllFlatEntityMaps: blueprint,
+        existingAllFlatEntityMaps: existing,
+        now: NOW,
+      });
+
+      expect(firstPlan.toDelete.fieldMetadata).toHaveLength(2);
+      expect(firstPlan.toDelete.viewField).toHaveLength(1);
+      expect(secondPlan.toDelete).toEqual({ fieldMetadata: [], viewField: [] });
+      expect(secondPlan.extra).toEqual([]);
+    });
   });
 });

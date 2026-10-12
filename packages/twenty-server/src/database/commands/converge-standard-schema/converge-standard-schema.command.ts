@@ -13,6 +13,7 @@ import {
 } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
   countStandardSchemaConvergenceCreates,
+  countStandardSchemaConvergenceDeletes,
   planStandardSchemaConvergence,
   type StandardSchemaConvergencePlan,
 } from 'src/database/commands/converge-standard-schema/utils/plan-standard-schema-convergence.util';
@@ -38,6 +39,15 @@ export type ConvergeSchemaResult = {
   dryRun: boolean;
   status: 'noop' | 'planned' | 'applied' | 'failed';
   toCreate: Record<string, number>;
+  // Retired standard entities deleted (or, in --dry-run, planned for deletion).
+  // Only ids on CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS ever appear.
+  toDelete: Record<string, number>;
+  deletes: {
+    kind: 'fieldMetadata' | 'viewField';
+    objectName: string;
+    name: string;
+    universalIdentifier: string;
+  }[];
   optionAdds: number;
   shadowed: {
     kind: string;
@@ -49,17 +59,21 @@ export type ConvergeSchemaResult = {
   conflicts: StandardSchemaConvergencePlan['conflicts'];
   skippedDependents: Record<string, number>;
   skippedKinds: Record<string, number>;
+  // Report-only: never acted on.
+  drift: StandardSchemaConvergencePlan['drift'];
+  extra: StandardSchemaConvergencePlan['extra'];
   seed: { mls: SeedStatus; pipelineConfig: SeedStatus };
   error: string | null;
 };
 
 // Standalone (not @RegisteredWorkspaceCommand): it diffs the whole current
 // standard blueprint on every run, so it converges any additive blueprint
-// delta, is idempotent (nothing missing => noop) and fails closed.
+// delta plus the allowlisted retirements, is idempotent (nothing missing and
+// nothing retired left => noop) and fails closed.
 @Command({
   name: 'workspace:converge-standard-schema',
   description:
-    'Create-only convergence of existing workspaces onto the current standard metadata blueprint (missing objects, fields, views, view fields, indexes, page layouts; appends missing select options). Never updates or deletes existing metadata. Exits non-zero if any workspace fails.',
+    'Convergence of existing workspaces onto the current standard metadata blueprint: creates missing objects, fields, views, view fields, indexes, page layouts and navigation items; appends missing select options; deletes only the explicitly retired standard entities (CONVERGE_RETIRED_STANDARD_UNIVERSAL_IDENTIFIERS). Reports drift/extra without acting on them. Exits non-zero if any workspace fails.',
 })
 export class ConvergeStandardSchemaCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -137,11 +151,15 @@ export class ConvergeStandardSchemaCommand extends ProvisionedWorkspaceCommandRu
       dryRun: isDryRun,
       status: 'failed',
       toCreate: {},
+      toDelete: {},
+      deletes: [],
       optionAdds: 0,
       shadowed: [],
       conflicts: [],
       skippedDependents: {},
       skippedKinds: {},
+      drift: [],
+      extra: [],
       seed: { mls: 'not-needed', pipelineConfig: 'not-needed' },
       error: null,
     };
@@ -247,6 +265,38 @@ export class ConvergeStandardSchemaCommand extends ProvisionedWorkspaceCommandRu
     result.conflicts = plan.conflicts;
     result.skippedDependents = plan.skippedDependents;
     result.skippedKinds = plan.skippedKinds;
+    result.drift = plan.drift;
+    result.extra = plan.extra;
+    result.toDelete = countStandardSchemaConvergenceDeletes(plan.toDelete);
+    result.deletes = [
+      ...plan.toDelete.fieldMetadata.map((field) => ({
+        kind: 'fieldMetadata' as const,
+        objectName:
+          existingAllFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier[field.objectMetadataUniversalIdentifier]
+            ?.nameSingular ?? field.objectMetadataUniversalIdentifier,
+        name: field.name,
+        universalIdentifier: field.universalIdentifier,
+      })),
+      ...plan.toDelete.viewField.map((viewField) => ({
+        kind: 'viewField' as const,
+        objectName:
+          existingAllFlatEntityMaps.flatViewMaps.byUniversalIdentifier[
+            viewField.viewUniversalIdentifier
+          ]?.name ?? viewField.viewUniversalIdentifier,
+        name:
+          existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+            viewField.fieldMetadataUniversalIdentifier
+          ]?.name ?? viewField.fieldMetadataUniversalIdentifier,
+        universalIdentifier: viewField.universalIdentifier,
+      })),
+    ];
+
+    for (const { kind, objectName, name } of result.deletes) {
+      this.logger.log(
+        `${isDryRun ? 'WOULD DELETE' : 'DELETE'} retired standard ${kind} ${objectName}.${name} on workspace ${workspaceId}`,
+      );
+    }
 
     for (const { kind, objectName, name } of plan.shadowed) {
       this.logger.warn(
@@ -269,7 +319,16 @@ export class ConvergeStandardSchemaCommand extends ProvisionedWorkspaceCommandRu
       0,
     );
 
-    if (createCount === 0 && plan.fieldMetadataToUpdate.length === 0) {
+    const deleteCount = Object.values(result.toDelete).reduce(
+      (total, count) => total + count,
+      0,
+    );
+
+    if (
+      createCount === 0 &&
+      deleteCount === 0 &&
+      plan.fieldMetadataToUpdate.length === 0
+    ) {
       result.status = 'noop';
 
       return;
@@ -289,8 +348,13 @@ export class ConvergeStandardSchemaCommand extends ProvisionedWorkspaceCommandRu
         ),
         fieldMetadata: {
           flatEntityToCreate: plan.toCreate.fieldMetadata,
-          flatEntityToDelete: [],
+          flatEntityToDelete: plan.toDelete.fieldMetadata,
           flatEntityToUpdate: plan.fieldMetadataToUpdate,
+        },
+        viewField: {
+          flatEntityToCreate: plan.toCreate.viewField,
+          flatEntityToDelete: plan.toDelete.viewField,
+          flatEntityToUpdate: [],
         },
         commandMenuItem: commandMenuItemOperations,
       };
@@ -326,7 +390,7 @@ export class ConvergeStandardSchemaCommand extends ProvisionedWorkspaceCommandRu
     result.status = 'applied';
 
     this.logger.log(
-      `Applied standard schema convergence on workspace ${workspaceId}: ${JSON.stringify(result.toCreate)}, ${plan.optionAdds} option(s) appended`,
+      `Applied standard schema convergence on workspace ${workspaceId}: created ${JSON.stringify(result.toCreate)}, deleted ${JSON.stringify(result.toDelete)}, ${plan.optionAdds} option(s) appended`,
     );
 
     await this.seedCreatedStandardObjects({ workspaceId, plan, result });
