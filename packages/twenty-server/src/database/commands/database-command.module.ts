@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { ConvergeStandardSchemaCommand } from 'src/database/commands/converge-standard-schema/converge-standard-schema.command';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { CreateDemoWorkspaceCommand } from 'src/database/commands/create-demo-workspace.command';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
@@ -62,7 +63,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
 @Module({
   imports: [
     UpgradeVersionCommandModule,
-    TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity, UserEntity]),
     WorkspaceExportModule,
     // Cron command dependencies
     MessagingImportManagerModule,

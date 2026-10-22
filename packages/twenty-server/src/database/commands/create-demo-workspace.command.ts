@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -41,6 +42,8 @@ export class CreateDemoWorkspaceCommand extends CommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly signInUpService: SignInUpService,
     private readonly workspaceService: WorkspaceService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
@@ -135,23 +138,39 @@ export class CreateDemoWorkspaceCommand extends CommandRunner {
 
     this.logger.log(`Creating demo workspace "${subdomain}"...`);
 
-    // Build a pre-verified new user (bcrypt password hash + isEmailVerified) the
-    // same way the real sign-up path does, so no email verification is required.
-    const newUserWithPicture =
-      await this.signInUpService.computePartialUserFromUserPayload(
-        {
-          email,
-          firstName: 'Demo',
-          lastName: 'Admin',
-          isEmailAlreadyVerified: true,
-        },
-        { provider: AuthProviderEnum.Password, password },
+    // core.user.email is globally unique: when the demo workspace was deleted but its
+    // user survived (no memberships left), creating the user again fails with
+    // UQ_USER_EMAIL (surfaced as "Subdomain already taken"). Reuse that user instead.
+    const existingUser = await this.userRepository.findOne({ where: { email } });
+
+    const userData = isDefined(existingUser)
+      ? { type: 'existingUser' as const, existingUser }
+      : {
+          type: 'newUserWithPicture' as const,
+          // Build a pre-verified new user (bcrypt password hash + isEmailVerified) the
+          // same way the real sign-up path does, so no email verification is required.
+          newUserWithPicture:
+            await this.signInUpService.computePartialUserFromUserPayload(
+              {
+                email,
+                firstName: 'Demo',
+                lastName: 'Admin',
+                isEmailAlreadyVerified: true,
+              },
+              { provider: AuthProviderEnum.Password, password },
+            ),
+        };
+
+    if (isDefined(existingUser)) {
+      this.logger.log(
+        `Reusing existing user ${email} (id ${existingUser.id}) for demo workspace "${subdomain}".`,
       );
+    }
 
     // Same service the sign-up mutation uses: creates the workspace
-    // (PENDING_CREATION) + user + userWorkspace membership.
+    // (PENDING_CREATION) + user (or reuses it) + userWorkspace membership.
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
-      { type: 'newUserWithPicture', newUserWithPicture },
+      userData,
       { displayName, subdomain },
     );
 
